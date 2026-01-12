@@ -1,6 +1,6 @@
 # Zero Promile 🍺⏱️
 
-Zero Promile is a full-stack mobile application that estimates a user’s blood alcohol concentration (BAC) and calculates the estimated time until complete sobriety (0.00‰).  
+ZeroPromile is a full-stack mobile application that estimates a user’s blood alcohol concentration (BAC) and calculates the estimated time until complete sobriety (0.00‰).  
 The app uses deterministic, formula-based calculations and presents the results in a clear, mobile-first user experience.
 
 > ⚠️ **Disclaimer:** This application provides estimates only and must not be used for medical, legal, or driving decisions.
@@ -10,11 +10,11 @@ The app uses deterministic, formula-based calculations and presents the results 
 ## 📌 Problem we are solving
 
 People often underestimate how long alcohol remains in their bloodstream, which can lead to unsafe decisions.  
-SoberTime helps users understand how alcohol intake affects their body by estimating BAC levels and predicting when they will be sober again.
+ZeroPromile helps users understand how alcohol intake affects their body by estimating BAC levels and predicting when they will be sober again.
 
 ##  BAC Calculation Logic
 
-Zero Promile uses a simplified **Widmark-based formula** to estimate blood alcohol concentration:
+ZeroPromile uses a simplified **Widmark-based formula** to estimate blood alcohol concentration:
 
 BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) − (Elimination Rate × Time)
 
