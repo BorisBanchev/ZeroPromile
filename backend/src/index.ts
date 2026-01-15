@@ -2,12 +2,18 @@ import express from "express";
 import { config } from "dotenv";
 import { connectDB, disconnectDB } from "./config/db";
 
+// import routes
+import authRoutes from "./routes/authRoutes";
+
 config();
 
 const port: number = Number(process.env.PORT) || 3001;
 const app = express();
 
 app.use(express.json());
+
+// API routes
+app.use("/api/auth", authRoutes);
 
 const start = async () => {
   await connectDB();
