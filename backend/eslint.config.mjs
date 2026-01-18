@@ -17,7 +17,7 @@ export default tseslint.config({
   plugins: {
     "@stylistic": stylistic,
   },
-  ignores: ["dist/*", "prisma.config.ts"],
+  ignores: ["dist/*", "prisma.config.ts", "tests/**/*.ts", "vitest.config.ts"],
   rules: {
     "@stylistic/semi": "error",
     "@typescript-eslint/no-unsafe-assignment": "error",

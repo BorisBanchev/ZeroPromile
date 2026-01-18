@@ -9,8 +9,8 @@ import { Request, Response } from "express";
 
 const register = async (
   req: Request<unknown, unknown, RegisterRequestBody>,
-  res: Response<RegisterResponseBody | ErrorResponseBody>
-): Promise<void> => {
+  res: Response<RegisterResponseBody | ErrorResponseBody>,
+): Promise<Response<RegisterResponseBody | ErrorResponseBody>> => {
   const { name, email, password } = req.body;
 
   const userExists = await prisma.user.findUnique({
@@ -18,7 +18,7 @@ const register = async (
   });
 
   if (userExists) {
-    res.status(400).json({
+    return res.status(400).json({
       error: "User already exists with this email",
     });
   }
@@ -36,7 +36,7 @@ const register = async (
     },
   });
 
-  res.status(201).json({
+  return res.status(201).json({
     status: "success",
     data: {
       user: {

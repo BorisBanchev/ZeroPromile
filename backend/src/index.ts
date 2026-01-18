@@ -1,19 +1,10 @@
-import express from "express";
 import { config } from "dotenv";
 import { connectDB, disconnectDB } from "./config/db";
-
-// import routes
-import authRoutes from "./routes/authRoutes";
+import app from "./app";
 
 config();
 
 const port: number = Number(process.env.PORT) || 3001;
-const app = express();
-
-app.use(express.json());
-
-// API routes
-app.use("/api/auth", authRoutes);
 
 const start = async () => {
   await connectDB();
@@ -21,7 +12,7 @@ const start = async () => {
 start().catch((err) => {
   console.error(
     "Startup error:",
-    err instanceof Error ? err.stack ?? err.message : String(err)
+    err instanceof Error ? (err.stack ?? err.message) : String(err),
   );
 });
 
