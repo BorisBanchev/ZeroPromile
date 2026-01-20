@@ -8,7 +8,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/${{ toLower(github.repository_owner) }}/${{ toLower(github.event.repository.name) }}-backend
+  IMAGE_NAME: ghcr.io/borisbanchev03/zeropromile-api-staging
   JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
   JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
 
