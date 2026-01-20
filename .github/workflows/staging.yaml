@@ -8,7 +8,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/borisbanchev03/zeropromile-api-staging
+  IMAGE_NAME: ghcr.io/borisbanchev/zeropromile-api-staging
   JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
   JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
 
