@@ -1,3 +1,4 @@
+![GHA workflow badge](https://github.com/BorisBanchev/ZeroPromile/workflows/CI/badge.svg)
 # ZeroPromile 🍺⏱️
 
 ZeroPromile is a full-stack mobile application that estimates a user’s blood alcohol concentration (BAC) and calculates the estimated time until complete sobriety (0.00‰).  
