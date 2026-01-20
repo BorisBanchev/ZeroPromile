@@ -48,3 +48,42 @@ describe("POST /api/auth/register", () => {
     );
   });
 });
+
+describe("POST /api/auth/login", () => {
+  const LOGIN_USER = {
+    name: "Login User",
+    email: "login_user@example.com",
+    password: "password123",
+  };
+
+  beforeAll(async () => {
+    await prisma.user.deleteMany({ where: { email: LOGIN_USER.email } });
+    await request(app).post("/api/auth/register").send(LOGIN_USER).expect(201);
+  });
+
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { email: LOGIN_USER.email } });
+  });
+
+  it("responds 401 when email doesn't exist", async () => {
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "incorrect@example.com", password: "incorrect" })
+      .expect(401);
+
+    expect(res.body).toHaveProperty("error", "Invalid email or password");
+  });
+
+  it("logs in the user with correct credentials and returns user & token", async () => {
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: LOGIN_USER.email, password: LOGIN_USER.password })
+      .expect(201);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.data.user).toHaveProperty("id");
+    expect(res.body.data.user.email).toBe(LOGIN_USER.email);
+    expect(res.body.data).toHaveProperty("token");
+    expect(typeof res.body.data.token).toBe("string");
+  });
+});
