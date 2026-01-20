@@ -23,10 +23,19 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install & Build
+      - name: Install
         run: |
           cd backend
           npm ci
+
+      - name: Generate Prisma client
+        run: |
+          cd backend
+          npx prisma generate
+
+      - name: Build
+        run: |
+          cd backend
           npm run build
 
       - name: Lint
