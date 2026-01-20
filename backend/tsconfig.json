@@ -3,7 +3,7 @@
     "target": "ES6",
     "module": "commonjs",
     "outDir": "./dist/",
-    "rootDir": ".",
+    "rootDir": "src",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -14,11 +14,6 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false
   },
-  "include": [
-    "src/**/*.ts",
-    "prisma.config.ts",
-    "tests/**/*.ts",
-    "vitest.config.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }

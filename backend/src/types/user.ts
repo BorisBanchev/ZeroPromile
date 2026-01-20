@@ -12,9 +12,24 @@ export interface RegisterResponseBody {
       name: string;
       email: string;
     };
+    token: string;
   };
 }
 
+export interface LoginRequestBody {
+  email: string;
+  password: string;
+}
+export interface LoginResponseBody {
+  status: string;
+  data: {
+    user: {
+      id: string;
+      email: string;
+    };
+    token: string;
+  };
+}
 export interface ErrorResponseBody {
   error: string;
 }
