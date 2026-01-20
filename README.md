@@ -1,4 +1,4 @@
-[![Staging CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=staging)]
+![Staging CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=staging)
 
 # ZeroPromile 🍺⏱️
 
