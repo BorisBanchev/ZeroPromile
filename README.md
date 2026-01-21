@@ -1,4 +1,5 @@
 ![Staging CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=staging)
+![Production CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=main)
 
 # ZeroPromile 🍺⏱️
 
