@@ -1,10 +1,16 @@
-name: Production — Build, Test, Migrate, Deploy (PR -> main)
+name: Production — Build, Test, Migrate, Deploy
 on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
 env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-backend
+  IMAGE_NAME: ghcr.io/borisbanchev/zeropromile-api
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
 
 jobs:
   build-test-migrate-deploy:
@@ -18,11 +24,25 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install & Build
+      - name: Install
         run: |
           cd backend
           npm ci
+
+      - name: Generate Prisma client
+        run: |
+          cd backend
+          npx prisma generate
+
+      - name: Build
+        run: |
+          cd backend
           npm run build
+
+      - name: Lint
+        run: |
+          cd backend
+          npm run lint
 
       - name: Run tests
         env:
@@ -40,7 +60,7 @@ jobs:
 
       - name: Build and push image
         id: publish
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           file: ./backend/Dockerfile
@@ -64,4 +84,4 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
           IMAGE: ${{ env.IMAGE_NAME }}:${{ github.sha }}
         run: |
-          flyctl deploy --image $IMAGE --app your-app-production --remote-only
+          flyctl deploy --image $IMAGE --app zeropromile-api --config backend/fly.production.toml
