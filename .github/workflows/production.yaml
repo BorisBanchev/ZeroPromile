@@ -67,6 +67,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          cache-from: type=registry,ref=${{IMAGE_NAME}}:buildcache
+          cache-to: type=registry,ref=${{IMAGE_NAME}}:buildcache,mode=max
 
       - name: Run Prisma migrations
         env:
