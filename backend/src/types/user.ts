@@ -1,3 +1,7 @@
+export enum Gender {
+  Male = "male",
+  Female = "female",
+}
 export interface RegisterRequestBody {
   name: string;
   email: string;
