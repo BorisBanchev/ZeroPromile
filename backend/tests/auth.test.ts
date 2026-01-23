@@ -68,7 +68,16 @@ describe("POST /api/auth/login", () => {
   it("responds 401 when email doesn't exist", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "incorrect@example.com", password: "incorrect" })
+      .send({ email: "incorrect@example.com", password: "password123" })
+      .expect(401);
+
+    expect(res.body).toHaveProperty("error", "Invalid email or password");
+  });
+
+  it("responds 401 when password invalid", async () => {
+    const res = await request(app)
+      .post("/api/auth/login")
+      .send({ email: "login_user@example.com", password: "invalid" })
       .expect(401);
 
     expect(res.body).toHaveProperty("error", "Invalid email or password");
