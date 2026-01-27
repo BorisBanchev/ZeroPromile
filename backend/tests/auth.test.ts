@@ -96,3 +96,43 @@ describe("POST /api/auth/login", () => {
     expect(typeof res.body.data.token).toBe("string");
   });
 });
+
+describe("POST /api/auth/logout", () => {
+  it("logs out and prevents access to protected routes", async () => {
+    const USER = {
+      name: "Logout User",
+      email: "logout_user@example.com",
+      password: "password123",
+    };
+
+    const registerRes = await request(app)
+      .post("/api/auth/register")
+      .send(USER)
+      .expect(201);
+
+    const setCookie = registerRes.headers["set-cookie"];
+    expect(setCookie).toBeDefined();
+
+    const logoutRes = await request(app)
+      .post("/api/auth/logout")
+      .set("Cookie", Array.isArray(setCookie) ? setCookie : String(setCookie))
+      .expect(200);
+
+    expect(logoutRes.body.status).toBe("success");
+    const cleared = logoutRes.headers["set-cookie"];
+    expect(cleared).toBeDefined();
+    const cookieHeader = Array.isArray(cleared)
+      ? cleared.join("; ")
+      : String(cleared);
+    expect(cookieHeader).toMatch(/jwt=/);
+    expect(cookieHeader).toMatch(/Expires=Thu, 01 Jan 1970|Max-Age=0/i);
+
+    const protectedRes = await request(app)
+      .patch("/api/update/profile")
+      .set("Cookie", cookieHeader)
+      .send({ gender: "male", weight: 75 })
+      .expect(401);
+
+    expect(protectedRes.body).toHaveProperty("error");
+  });
+});
