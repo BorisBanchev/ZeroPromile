@@ -9,5 +9,5 @@
 | 20.1. | 5,5  | Kirjautumisen ja uloskirjautuminen logiikka, testit näille, CI / CD backendille                         |
 | 21.1. | 2    | Muokkaa CI / CD putkea julkaisemaan backendin tuotantoon Fly.io                                         |
 | 23.1. | 2    | Lisää route käyttäjän sukupuolen tallentamiseen, sukupuolen data validointi ja autentikointi middleware |
-| 27.1. |      |                                                                                                         |
+| 27.1. | 2,5  | Lisää updateProfile route, validaatiot, testit                                                          |
 |  yht  | 19   |                                                                                                         |
