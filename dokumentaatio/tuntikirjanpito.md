@@ -10,5 +10,5 @@
 | 21.1. | 2    | Muokkaa CI / CD putkea julkaisemaan backendin tuotantoon Fly.io                                         |
 | 23.1. | 2    | Lisää route käyttäjän sukupuolen tallentamiseen, sukupuolen data validointi ja autentikointi middleware |
 | 27.1. | 2,5  | Lisää updateProfile route, validaatiot, testit                                                          |
-| 28.1. |      |                                                                                                         |
-|  yht  | 21,5 |                                                                                                         |
+| 28.1. | 3    | Testit käyttäjän profiilin päivitykselle, BAC laskentalogiikan pohdiskelua                              |
+|  yht  | 24,5 |                                                                                                         |
