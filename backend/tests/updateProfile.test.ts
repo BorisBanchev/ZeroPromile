@@ -49,4 +49,71 @@ describe("PATCH /api/update/profile", () => {
     expect(dbUser!.gender).toBe("MALE");
     expect(dbUser!.weightKg).toBe(80);
   });
+  it("updating user with incorrect gender returns 400 and does not change DB", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ email: TEST_USER.email, password: TEST_USER.password })
+      .expect(201);
+
+    const setCookie = loginRes.headers["set-cookie"];
+    expect(setCookie).toBeDefined();
+    const cookieHeader = Array.isArray(setCookie)
+      ? setCookie.map((c) => c.split(";")[0]).join("; ")
+      : String(setCookie).split(";")[0];
+
+    const res = await request(app)
+      .patch("/api/update/profile")
+      .set("Cookie", cookieHeader)
+      .send({ gender: "invalid", weight: 80 })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(Array.isArray(res.body.error)).toBe(true);
+    expect(res.body.error[0]).toHaveProperty("message");
+    expect(String(res.body.error[0].message)).toMatch(
+      "Invalid gender: Must be either male or female",
+    );
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: TEST_USER.email },
+    });
+    expect(dbUser).not.toBeNull();
+    if (!dbUser) throw new Error("db user missing");
+    expect(dbUser.gender).toBe("MALE");
+    expect(dbUser.weightKg).toBe(80);
+  });
+
+  it("updating user with incorrect weight returns 400 and does not change DB", async () => {
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({ email: TEST_USER.email, password: TEST_USER.password })
+      .expect(201);
+
+    const setCookie = loginRes.headers["set-cookie"];
+    expect(setCookie).toBeDefined();
+    const cookieHeader = Array.isArray(setCookie)
+      ? setCookie.map((c) => c.split(";")[0]).join("; ")
+      : String(setCookie).split(";")[0];
+
+    const res = await request(app)
+      .patch("/api/update/profile")
+      .set("Cookie", cookieHeader)
+      .send({ gender: "male", weight: -200 })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error");
+    expect(Array.isArray(res.body.error)).toBe(true);
+    expect(res.body.error[0]).toHaveProperty("message");
+    expect(String(res.body.error[0].message)).toMatch(
+      "Weight must be positive number",
+    );
+
+    const dbUser = await prisma.user.findUnique({
+      where: { email: TEST_USER.email },
+    });
+    expect(dbUser).not.toBeNull();
+    if (!dbUser) throw new Error("db user missing");
+    expect(dbUser.gender).toBe("MALE");
+    expect(dbUser.weightKg).toBe(80);
+  });
 });
