@@ -1,4 +1,4 @@
-import { Drink } from "../types/calculateSobriety";
+import { Drink, TimeUntilSoberResult } from "../types/calculateSobriety";
 
 const ETHANOLDENSITY: number = 0.789;
 const BETA: number = 0.15;
@@ -36,4 +36,8 @@ export const hoursToHoursAndMinutes = (
   const hours: number = Math.floor(time);
   const minutes: number = Math.round((time - hours) * 60);
   return { hours, minutes };
+};
+
+export const soberTimeToMinutes = (time: TimeUntilSoberResult): number => {
+  return time.untilSober.hours * 60 + time.untilSober.minutes;
 };
