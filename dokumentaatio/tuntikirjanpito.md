@@ -12,4 +12,5 @@
 | 27.1. | 2,5  | Lisää updateProfile route, validaatiot, testit                                                          |
 | 28.1. | 3    | Testit käyttäjän profiilin päivitykselle, BAC laskentalogiikan pohdiskelua                              |
 | 29.1. | 3    | BAC laskemisen logiikka juomien lisäyksien jälkeen, testejä BAC laskemiselle                            |
-|  yht  | 27,5 |                                                                                                         |
+| 30.1. | 2,5  | Lisää route sessionin luomiselle, validaatiot sessionin nimelle                                         |
+|  yht  | 30   |                                                                                                         |
