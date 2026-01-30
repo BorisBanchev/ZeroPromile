@@ -11,4 +11,5 @@
 | 23.1. | 2    | Lisää route käyttäjän sukupuolen tallentamiseen, sukupuolen data validointi ja autentikointi middleware |
 | 27.1. | 2,5  | Lisää updateProfile route, validaatiot, testit                                                          |
 | 28.1. | 3    | Testit käyttäjän profiilin päivitykselle, BAC laskentalogiikan pohdiskelua                              |
-|  yht  | 24,5 |                                                                                                         |
+| 29.1. | 3    | BAC laskemisen logiikka juomien lisäyksien jälkeen, testejä BAC laskemiselle                            |
+|  yht  | 27,5 |                                                                                                         |
