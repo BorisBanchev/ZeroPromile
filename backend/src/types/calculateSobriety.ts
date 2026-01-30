@@ -22,3 +22,18 @@ export interface TimeUntilSoberResult {
     minutes: number;
   };
 }
+
+export interface CreateSessionRequestBody {
+  name: string;
+}
+
+export interface CreateSessionResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    name: string;
+    active: boolean;
+    startedAt: string;
+  };
+}

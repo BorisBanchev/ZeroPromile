@@ -1,5 +1,5 @@
 import type { RequestHandler } from "express";
-import { newUpdateProfileSchema } from "../utils/newUpdateProfileSchema";
+import { newUpdateProfileSchema } from "../validationSchemas/newUpdateProfileSchema";
 
 export const newUpdateProfileParser: RequestHandler = (req, _res, next) => {
   try {

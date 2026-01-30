@@ -34,6 +34,3 @@ export interface LoginResponseBody {
     token: string;
   };
 }
-export interface ErrorResponseBody {
-  error: string;
-}
