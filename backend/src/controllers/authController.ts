@@ -4,9 +4,9 @@ import {
   RegisterRequestBody,
   RegisterResponseBody,
   LoginRequestBody,
-  ErrorResponseBody,
   LoginResponseBody,
 } from "../types/user";
+import { ErrorResponseBody } from "../types/errorResponse";
 import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
 
