@@ -7,6 +7,8 @@ const TEST_USER = {
   name: "Test User1",
   email: "test_user1@example.com",
   password: "password123",
+  gender: "male",
+  weightKg: 80,
 };
 
 beforeAll(async () => {
@@ -29,6 +31,8 @@ describe("POST /api/auth/register", () => {
     expect(res.body.status).toBe("success");
     expect(res.body.data.user).toHaveProperty("id");
     expect(res.body.data.user.email).toBe(TEST_USER.email);
+    expect(res.body.data.user.gender).toBe(TEST_USER.gender);
+    expect(res.body.data.user.weightKg).toBe(TEST_USER.weightKg);
 
     const dbUser = await prisma.user.findUnique({
       where: { email: TEST_USER.email },
@@ -54,6 +58,8 @@ describe("POST /api/auth/login", () => {
     name: "Login User",
     email: "login_user@example.com",
     password: "password123",
+    gender: "male",
+    weightKg: 80,
   };
 
   beforeAll(async () => {
@@ -103,6 +109,8 @@ describe("POST /api/auth/logout", () => {
       name: "Logout User",
       email: "logout_user@example.com",
       password: "password123",
+      gender: "male",
+      weightKg: 80,
     };
 
     const registerRes = await request(app)
