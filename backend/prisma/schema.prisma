@@ -18,8 +18,8 @@ model User {
   name String
   email String @unique
   password String
-  gender Gender?
-  weightKg Float?
+  gender Gender
+  weightKg Float
   role Role @default(USER)
   sessions Session[]
   createdAt DateTime @default(now())

@@ -6,6 +6,8 @@ export interface RegisterRequestBody {
   name: string;
   email: string;
   password: string;
+  gender: Gender;
+  weightKg: number;
 }
 
 export interface RegisterResponseBody {
@@ -15,6 +17,8 @@ export interface RegisterResponseBody {
       id: string;
       name: string;
       email: string;
+      gender: Gender;
+      weightKg: number;
     };
     token: string;
   };

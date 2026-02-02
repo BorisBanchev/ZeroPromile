@@ -23,17 +23,28 @@ export interface TimeUntilSoberResult {
   };
 }
 
-export interface CreateSessionRequestBody {
-  name: string;
+export interface StartSessionRequestBody {
+  sessionName: string;
+  drink: {
+    name: string;
+    volumeMl: string;
+    abv: number;
+  };
 }
 
-export interface CreateSessionResponseBody {
+export interface StartSessionResponseBody {
   status: string;
   message: string;
   data: {
-    sessionId: string;
-    name: string;
-    active: boolean;
-    startedAt: string;
+    sessionName: string;
+    drink: {
+      name: string;
+      volumeMl: number;
+      abv: number;
+    };
+    timeUntilSobriety: {
+      hours: number;
+      minutes: number;
+    };
   };
 }

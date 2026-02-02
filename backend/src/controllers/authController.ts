@@ -9,12 +9,13 @@ import {
 import { ErrorResponseBody } from "../types/errorResponse";
 import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
+import { Gender } from "../generated/prisma/enums";
 
 const register = async (
   req: Request<unknown, unknown, RegisterRequestBody>,
   res: Response<RegisterResponseBody | ErrorResponseBody>,
 ): Promise<Response<RegisterResponseBody | ErrorResponseBody>> => {
-  const { name, email, password } = req.body;
+  const { name, email, password, gender, weightKg } = req.body;
 
   const userExists = await prisma.user.findUnique({
     where: { email: email },
@@ -29,15 +30,19 @@ const register = async (
   const salt: string = await bcrypt.genSalt(10);
   const hashedPassword: string = await bcrypt.hash(password, salt);
 
-  const user = prisma.user.create({
+  const prismaGender = gender?.toString().toUpperCase() as Gender;
+
+  const user = await prisma.user.create({
     data: {
       name,
       email,
       password: hashedPassword,
+      gender: prismaGender,
+      weightKg,
     },
   });
 
-  const token = generateToken((await user).id);
+  const token = generateToken(user.id);
   res.cookie("jwt", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -50,9 +55,11 @@ const register = async (
     status: "success",
     data: {
       user: {
-        id: (await user).id,
+        id: user.id,
         name: name,
         email: email,
+        gender: gender,
+        weightKg: weightKg,
       },
       token,
     },

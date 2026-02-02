@@ -7,6 +7,8 @@ const TEST_USER = {
   name: "test user",
   email: "test_user@test.com",
   password: "12345678",
+  gender: "male",
+  weightKg: 80,
 };
 
 beforeAll(async () => {
@@ -105,7 +107,7 @@ describe("PATCH /api/update/profile", () => {
     expect(Array.isArray(res.body.error)).toBe(true);
     expect(res.body.error[0]).toHaveProperty("message");
     expect(String(res.body.error[0].message)).toMatch(
-      "Weight must be positive number",
+      "Weight must be a positive number",
     );
 
     const dbUser = await prisma.user.findUnique({
