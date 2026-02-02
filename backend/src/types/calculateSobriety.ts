@@ -27,7 +27,7 @@ export interface StartSessionRequestBody {
   sessionName: string;
   drink: {
     name: string;
-    volumeMl: string;
+    volumeMl: number;
     abv: number;
   };
 }

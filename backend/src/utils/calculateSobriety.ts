@@ -3,6 +3,7 @@ import { Drink, TimeUntilSoberResult } from "../types/calculateSobriety";
 const ETHANOLDENSITY: number = 0.789;
 const BETA: number = 0.15;
 
+// returns promilles
 export const drinkToBAC = (
   volumeMl: number,
   abv: number,
@@ -13,17 +14,22 @@ export const drinkToBAC = (
   return grams / (weightKg * r);
 };
 
-export const currentBAC = (drinks: Drink[], tNow: number): number => {
+// returns current total promilles since session started
+export const currentBAC = (drinks: Drink[], tNowMs: number): number => {
   let currentBac = 0;
 
   for (const d of drinks) {
-    const elapsed: number = tNow - d.time;
-    const remainingBAC: number = Math.max(0, d.bac - BETA * elapsed);
+    const elapsedHours: number = Math.max(
+      0,
+      (tNowMs - d.time) / (1000 * 60 * 60),
+    );
+    const remainingBAC: number = Math.max(0, d.bac - BETA * elapsedHours);
     currentBac += remainingBAC;
   }
   return Math.max(0, currentBac);
 };
 
+// returns time until complete sobriety in hours and minutes
 export const timeUntilSober = (
   bac: number,
 ): { currentBac: number; untilSober: { hours: number; minutes: number } } => {
