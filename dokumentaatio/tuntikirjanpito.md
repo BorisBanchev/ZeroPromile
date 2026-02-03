@@ -14,4 +14,5 @@
 | 29.1. | 3    | BAC laskemisen logiikka juomien lisäyksien jälkeen, testejä BAC laskemiselle                            |
 | 30.1. | 2,5  | Lisää route sessionin luomiselle, validaatiot sessionin nimelle                                         |
 | 2.2.  | 3    | Muokkaa routea sessionin luomiselle ja sen validointia toimimaan halutulla tavalla                      |
-|  yht  | 33   |                                                                                                         |
+| 3.2.  | 2,5  | Muokkaa routea sessionin luomiselle ja sen validointia toimimaan halutulla tavalla                      |
+|  yht  | 35,5 |                                                                                                         |

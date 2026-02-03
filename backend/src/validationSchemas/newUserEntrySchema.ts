@@ -11,5 +11,7 @@ export const newUserEntrySchema = z.object({
     ["male", "female"],
     "Invalid gender: must be either male or female",
   ),
-  weightKg: z.number().positive("Weight must be a positive number"),
+  weightKg: z
+    .number("Weight must be a positive number")
+    .positive("Weight must be a positive number"),
 });
