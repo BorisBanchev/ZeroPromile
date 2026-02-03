@@ -48,3 +48,28 @@ export interface StartSessionResponseBody {
     };
   };
 }
+
+export interface AddDrinkRequestBody {
+  drink: {
+    name: string;
+    volumeMl: number;
+    abv: number;
+  };
+}
+
+export interface AddDrinkResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    drink: {
+      name: string;
+      volumeMl: number;
+      abv: number;
+    };
+    timeUntilSobriety: {
+      hours: number;
+      minutes: number;
+    };
+  };
+}

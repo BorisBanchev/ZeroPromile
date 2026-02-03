@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import {
+  AddDrinkRequestBody,
+  AddDrinkResponseBody,
   StartSessionRequestBody,
   StartSessionResponseBody,
 } from "../types/calculateSobriety";
@@ -101,5 +103,83 @@ export const startSession = async (
   } catch (err: unknown) {
     if (err instanceof Error) console.error(err.message);
     return res.status(500).json({ error: "Failed to start session" });
+  }
+};
+
+export const addDrinkToSession = async (
+  req: Request<unknown, unknown, AddDrinkRequestBody>,
+  res: Response<AddDrinkResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  const { drink } = req.body;
+
+  try {
+    const session = await prisma.session.findFirst({
+      where: { userId: req.user.id, active: true },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Active session not found" });
+    }
+
+    const distributionFactor =
+      req.user.gender === PrismaGender.MALE ? 0.68 : 0.55;
+    const weightKg = req.user.weightKg;
+
+    const bacContribution = drinkToBAC(
+      drink.volumeMl,
+      drink.abv,
+      weightKg,
+      distributionFactor,
+    );
+
+    await prisma.sessionDrink.create({
+      data: {
+        sessionId: session.id,
+        name: drink.name,
+        volumeMl: drink.volumeMl,
+        abv: drink.abv,
+        bacContribution,
+        consumedAt: new Date(),
+      },
+    });
+
+    const drinks = await prisma.sessionDrink.findMany({
+      where: { sessionId: session.id },
+      orderBy: { consumedAt: "asc" },
+      select: { consumedAt: true, bacContribution: true },
+    });
+
+    const drinksForCalc = drinks.map((d) => ({
+      time: new Date(d.consumedAt).getTime(),
+      bac: d.bacContribution ?? 0,
+    }));
+
+    const timeNowMs = Date.now();
+    const totalPromilles = currentBAC(drinksForCalc, timeNowMs);
+    const sober = timeUntilSober(totalPromilles);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Drink added to session",
+      data: {
+        sessionId: session.id,
+        drink: {
+          name: drink.name,
+          volumeMl: drink.volumeMl,
+          abv: drink.abv,
+        },
+        timeUntilSobriety: {
+          hours: sober.untilSober.hours,
+          minutes: sober.untilSober.minutes,
+        },
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to add drink to session" });
   }
 };
