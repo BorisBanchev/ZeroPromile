@@ -15,5 +15,5 @@
 | 30.1. | 2,5  | Lisää route sessionin luomiselle, validaatiot sessionin nimelle                                         |
 | 2.2.  | 3    | Muokkaa routea sessionin luomiselle ja sen validointia toimimaan halutulla tavalla                      |
 | 3.2.  | 2,5  | Lisää route juomien lisäämiselle sessioniin ja validaatiot tälle                                        |
-| 4.2.  | 1    | Lisää testejä sessionin luomiselle                                                                      |
-|  yht  | 36,5 |                                                                                                         |
+| 4.2.  | 2,5  | Lisää testejä sessionin luomiselle sekä BAC:n laskemisen rajatapauksille                                |
+|  yht  | 38   |                                                                                                         |
