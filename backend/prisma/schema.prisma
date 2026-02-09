@@ -34,7 +34,6 @@ model Session {
   endedAt DateTime?
   active Boolean  @default(true)
   drinks  SessionDrink[]
-  timeline SessionTimeline?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -55,15 +54,6 @@ model SessionDrink {
   @@index([sessionId, consumedAt])
 }
 
-model SessionTimeline {
-  id String @id @default(uuid())
-  sessionId String @unique
-  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  timelineData Json // Array of {timestamp: DateTime, bac: Float}
-  createdAt DateTime @default(now())
-
-  @@index([sessionId])
-}
 
 enum Role {
   USER
