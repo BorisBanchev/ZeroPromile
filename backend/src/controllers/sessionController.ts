@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   AddDrinkRequestBody,
   AddDrinkResponseBody,
+  EndSessionResponseBody,
   StartSessionRequestBody,
   StartSessionResponseBody,
 } from "../types/calculateSobriety";
@@ -184,6 +185,41 @@ export const addDrinkToSession = async (
   }
 };
 
-// export const endSession = async (req: Request<>, res: Response<>) => {
+export const endSession = async (
+  req: Request,
+  res: Response<EndSessionResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
 
-// }
+  try {
+    const session = await prisma.session.findFirst({
+      where: { userId: req.user.id, active: true },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Active session was not found" });
+    }
+    const updatedSession = await prisma.session.update({
+      where: { id: session.id },
+      data: {
+        active: false,
+        endedAt: new Date(),
+      },
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Session ended",
+      data: {
+        sessionId: updatedSession.id,
+        sessionName: updatedSession.name,
+        active: updatedSession.active,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to end session" });
+  }
+};

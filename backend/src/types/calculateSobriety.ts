@@ -73,3 +73,13 @@ export interface AddDrinkResponseBody {
     };
   };
 }
+
+export interface EndSessionResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    sessionName: string;
+    active: boolean;
+  };
+}
