@@ -3,6 +3,7 @@ import {
   AddDrinkRequestBody,
   AddDrinkResponseBody,
   EndSessionResponseBody,
+  GetSessionTimelineResponseBody,
   StartSessionRequestBody,
   StartSessionResponseBody,
 } from "../types/calculateSobriety";
@@ -221,5 +222,67 @@ export const endSession = async (
   } catch (err: unknown) {
     if (err instanceof Error) console.error(err.message);
     return res.status(500).json({ error: "Failed to end session" });
+  }
+};
+
+export const getSessionTimeline = async (
+  req: Request<{ sessionId: string }>,
+  res: Response<GetSessionTimelineResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  const { sessionId } = req.params;
+
+  try {
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      include: {
+        drinks: {
+          orderBy: { consumedAt: "asc" },
+        },
+      },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    if (session.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "Not authorized to access this session" });
+    }
+
+    if (session.active) {
+      return res
+        .status(400)
+        .json({ error: "Session is still active. End the session first" });
+    }
+
+    const timeline = session.drinks.map((drink) => ({
+      consumedAt: drink.consumedAt.toISOString(),
+      bacLevel: drink.bacContribution ?? 0,
+      drinkName: drink.name,
+    }));
+
+    return res.status(200).json({
+      status: "success",
+      message: "Session timeline retrieved",
+      data: {
+        sessionId: session.id,
+        sessionName: session.name,
+        startedAt: session.startedAt.toISOString(),
+        endedAt: session.endedAt ? session.endedAt.toISOString() : null,
+        active: session.active,
+        timeline,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve session timeline" });
   }
 };

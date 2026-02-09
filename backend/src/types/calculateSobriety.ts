@@ -83,3 +83,22 @@ export interface EndSessionResponseBody {
     active: boolean;
   };
 }
+
+export interface TimelineDataPoint {
+  consumedAt: string;
+  bacLevel: number;
+  drinkName: string;
+}
+
+export interface GetSessionTimelineResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    sessionName: string;
+    startedAt: string;
+    endedAt: string | null;
+    active: boolean;
+    timeline: TimelineDataPoint[];
+  };
+}
