@@ -7,12 +7,15 @@ import {
   startSession,
   endSession,
   getSessionTimeline,
+  getUserSessions,
 } from "../controllers/sessionController";
 import { newDrinkParser } from "../middlewares/newDrinkParser";
 
 const router = express.Router();
 
 router.use(authMiddleware);
+
+router.get("/", getUserSessions);
 
 router.post("/", newSessionParser, startSession);
 

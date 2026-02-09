@@ -102,3 +102,20 @@ export interface GetSessionTimelineResponseBody {
     timeline: TimelineDataPoint[];
   };
 }
+
+export interface SessionSummary {
+  sessionId: string;
+  sessionName: string;
+  startedAt: string;
+  endedAt: string | null;
+  active: boolean;
+  totalDrinks: number;
+}
+
+export interface GetSessionsResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessions: SessionSummary[];
+  };
+}

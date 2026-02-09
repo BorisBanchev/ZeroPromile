@@ -3,9 +3,12 @@ import {
   AddDrinkRequestBody,
   AddDrinkResponseBody,
   EndSessionResponseBody,
+  GetSessionsResponseBody,
   GetSessionTimelineResponseBody,
+  SessionSummary,
   StartSessionRequestBody,
   StartSessionResponseBody,
+  TimelineDataPoint,
 } from "../types/calculateSobriety";
 import { ErrorResponseBody } from "../types/errorResponse";
 import { prisma } from "../config/db";
@@ -261,7 +264,7 @@ export const getSessionTimeline = async (
         .json({ error: "Session is still active. End the session first" });
     }
 
-    const timeline = session.drinks.map((drink) => ({
+    const timeline: TimelineDataPoint[] = session.drinks.map((drink) => ({
       consumedAt: drink.consumedAt.toISOString(),
       bacLevel: drink.bacContribution ?? 0,
       drinkName: drink.name,
@@ -284,5 +287,46 @@ export const getSessionTimeline = async (
     return res
       .status(500)
       .json({ error: "Failed to retrieve session timeline" });
+  }
+};
+
+export const getUserSessions = async (
+  req: Request,
+  res: Response<GetSessionsResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  try {
+    const sessions = await prisma.session.findMany({
+      where: { userId: req.user.id },
+      orderBy: { startedAt: "desc" },
+      include: {
+        _count: {
+          select: { drinks: true },
+        },
+      },
+    });
+
+    const sessionSummaries: SessionSummary[] = sessions.map((session) => ({
+      sessionId: session.id,
+      sessionName: session.name,
+      startedAt: session.startedAt.toISOString(),
+      endedAt: session.endedAt ? session.endedAt.toISOString() : null,
+      active: session.active,
+      totalDrinks: session._count.drinks,
+    }));
+
+    return res.status(200).json({
+      status: "success",
+      message: "Sessions retrieved",
+      data: {
+        sessions: sessionSummaries,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to retrieve sessions" });
   }
 };
