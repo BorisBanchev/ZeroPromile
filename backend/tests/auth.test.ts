@@ -1,27 +1,41 @@
-import { beforeAll, afterAll, describe, it, expect } from "vitest";
+import {
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+  describe,
+  it,
+  expect,
+} from "vitest";
 import request from "supertest";
 import app from "../src/app";
 import { connectDB, disconnectDB, prisma } from "../src/config/db";
 
-const TEST_USER = {
-  name: "Test User1",
-  email: "test_user1@example.com",
-  password: "password123",
-  gender: "male",
-  weightKg: 80,
-};
-
 beforeAll(async () => {
   await connectDB();
-  await prisma.user.deleteMany({});
 });
 
 afterAll(async () => {
-  await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
   await disconnectDB();
 });
 
 describe("POST /api/auth/register", () => {
+  const TEST_USER = {
+    name: "Test User1",
+    email: "test_user1@example.com",
+    password: "password123",
+    gender: "male",
+    weightKg: 80,
+  };
+
+  beforeEach(async () => {
+    await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
+  });
+
   it("creates a user when none exists", async () => {
     const res = await request(app)
       .post("/api/auth/register")
@@ -40,7 +54,10 @@ describe("POST /api/auth/register", () => {
     expect(dbUser).not.toBeNull();
     expect(dbUser!.password).not.toBe(TEST_USER.password);
   });
+
   it("responds 400 with error when user already exists", async () => {
+    await request(app).post("/api/auth/register").send(TEST_USER).expect(201);
+
     const res = await request(app)
       .post("/api/auth/register")
       .send(TEST_USER)
@@ -62,12 +79,12 @@ describe("POST /api/auth/login", () => {
     weightKg: 80,
   };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await prisma.user.deleteMany({ where: { email: LOGIN_USER.email } });
     await request(app).post("/api/auth/register").send(LOGIN_USER).expect(201);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await prisma.user.deleteMany({ where: { email: LOGIN_USER.email } });
   });
 
@@ -83,7 +100,7 @@ describe("POST /api/auth/login", () => {
   it("responds 401 when password invalid", async () => {
     const res = await request(app)
       .post("/api/auth/login")
-      .send({ email: "login_user@example.com", password: "invalid" })
+      .send({ email: LOGIN_USER.email, password: "invalid" })
       .expect(401);
 
     expect(res.body).toHaveProperty("error", "Invalid email or password");
@@ -104,18 +121,26 @@ describe("POST /api/auth/login", () => {
 });
 
 describe("POST /api/auth/logout", () => {
-  it("logs out and prevents access to protected routes", async () => {
-    const USER = {
-      name: "Logout User",
-      email: "logout_user@example.com",
-      password: "password123",
-      gender: "male",
-      weightKg: 80,
-    };
+  const LOGOUT_USER = {
+    name: "Logout User",
+    email: "logout_user@example.com",
+    password: "password123",
+    gender: "male",
+    weightKg: 80,
+  };
 
+  beforeEach(async () => {
+    await prisma.user.deleteMany({ where: { email: LOGOUT_USER.email } });
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany({ where: { email: LOGOUT_USER.email } });
+  });
+
+  it("logs out and prevents access to protected routes", async () => {
     const registerRes = await request(app)
       .post("/api/auth/register")
-      .send(USER)
+      .send(LOGOUT_USER)
       .expect(201);
 
     const setCookie = registerRes.headers["set-cookie"];
