@@ -183,3 +183,7 @@ export const addDrinkToSession = async (
     return res.status(500).json({ error: "Failed to add drink to session" });
   }
 };
+
+// export const endSession = async (req: Request<>, res: Response<>) => {
+
+// }

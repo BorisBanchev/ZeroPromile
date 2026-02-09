@@ -16,6 +16,8 @@ router.post("/", newSessionParser, startSession);
 
 router.post("/drinks", newDrinkParser, addDrinkToSession);
 
+// router.patch("/endsession", endSession);
+
 router.use(errorMiddleware);
 
 export default router;
