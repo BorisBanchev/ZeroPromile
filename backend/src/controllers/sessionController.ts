@@ -2,8 +2,13 @@ import { Request, Response } from "express";
 import {
   AddDrinkRequestBody,
   AddDrinkResponseBody,
+  EndSessionResponseBody,
+  GetSessionsResponseBody,
+  GetSessionTimelineResponseBody,
+  SessionSummary,
   StartSessionRequestBody,
   StartSessionResponseBody,
+  TimelineDataPoint,
 } from "../types/calculateSobriety";
 import { ErrorResponseBody } from "../types/errorResponse";
 import { prisma } from "../config/db";
@@ -184,6 +189,144 @@ export const addDrinkToSession = async (
   }
 };
 
-// export const endSession = async (req: Request<>, res: Response<>) => {
+export const endSession = async (
+  req: Request,
+  res: Response<EndSessionResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
 
-// }
+  try {
+    const session = await prisma.session.findFirst({
+      where: { userId: req.user.id, active: true },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Active session was not found" });
+    }
+    const updatedSession = await prisma.session.update({
+      where: { id: session.id },
+      data: {
+        active: false,
+        endedAt: new Date(),
+      },
+    });
+
+    return res.status(200).json({
+      status: "success",
+      message: "Session ended",
+      data: {
+        sessionId: updatedSession.id,
+        sessionName: updatedSession.name,
+        active: updatedSession.active,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to end session" });
+  }
+};
+
+export const getSessionTimeline = async (
+  req: Request<{ sessionId: string }>,
+  res: Response<GetSessionTimelineResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  const { sessionId } = req.params;
+
+  try {
+    const session = await prisma.session.findUnique({
+      where: { id: sessionId },
+      include: {
+        drinks: {
+          orderBy: { consumedAt: "asc" },
+        },
+      },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "Session not found" });
+    }
+
+    if (session.userId !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: "Not authorized to access this session" });
+    }
+
+    if (session.active) {
+      return res
+        .status(400)
+        .json({ error: "Session is still active. End the session first" });
+    }
+
+    const timeline: TimelineDataPoint[] = session.drinks.map((drink) => ({
+      consumedAt: drink.consumedAt.toISOString(),
+      bacLevel: drink.bacContribution ?? 0,
+      drinkName: drink.name,
+    }));
+
+    return res.status(200).json({
+      status: "success",
+      message: "Session timeline retrieved",
+      data: {
+        sessionId: session.id,
+        sessionName: session.name,
+        startedAt: session.startedAt.toISOString(),
+        endedAt: session.endedAt ? session.endedAt.toISOString() : null,
+        active: session.active,
+        timeline,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res
+      .status(500)
+      .json({ error: "Failed to retrieve session timeline" });
+  }
+};
+
+export const getUserSessions = async (
+  req: Request,
+  res: Response<GetSessionsResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  try {
+    const sessions = await prisma.session.findMany({
+      where: { userId: req.user.id },
+      orderBy: { startedAt: "desc" },
+      include: {
+        _count: {
+          select: { drinks: true },
+        },
+      },
+    });
+
+    const sessionSummaries: SessionSummary[] = sessions.map((session) => ({
+      sessionId: session.id,
+      sessionName: session.name,
+      startedAt: session.startedAt.toISOString(),
+      endedAt: session.endedAt ? session.endedAt.toISOString() : null,
+      active: session.active,
+      totalDrinks: session._count.drinks,
+    }));
+
+    return res.status(200).json({
+      status: "success",
+      message: "Sessions retrieved",
+      data: {
+        sessions: sessionSummaries,
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to retrieve sessions" });
+  }
+};

@@ -73,3 +73,49 @@ export interface AddDrinkResponseBody {
     };
   };
 }
+
+export interface EndSessionResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    sessionName: string;
+    active: boolean;
+  };
+}
+
+export interface TimelineDataPoint {
+  consumedAt: string;
+  bacLevel: number;
+  drinkName: string;
+}
+
+export interface GetSessionTimelineResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    sessionName: string;
+    startedAt: string;
+    endedAt: string | null;
+    active: boolean;
+    timeline: TimelineDataPoint[];
+  };
+}
+
+export interface SessionSummary {
+  sessionId: string;
+  sessionName: string;
+  startedAt: string;
+  endedAt: string | null;
+  active: boolean;
+  totalDrinks: number;
+}
+
+export interface GetSessionsResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessions: SessionSummary[];
+  };
+}
