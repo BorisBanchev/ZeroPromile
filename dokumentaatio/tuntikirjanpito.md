@@ -17,4 +17,5 @@
 | 3.2.  | 2,5  | Lisää route juomien lisäämiselle sessioniin ja validaatiot tälle                                         |
 | 4.2.  | 2,5  | Lisää testejä sessionin luomiselle sekä BAC:n laskemisen rajatapauksille                                 |
 | 9.2.  | 3,5  | Lisää routet sessionin lopettamiselle, sessionejen datan saamiselle, sessionin timeline datan saamiselle |
-|  yht  | 41,5 |                                                                                                          |
+| 11.2. | 2    | Expo dokumentaation lukemista                                                                            |
+|  yht  | 43,5 |                                                                                                          |
