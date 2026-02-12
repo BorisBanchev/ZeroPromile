@@ -32,8 +32,8 @@ export const authMiddleware = async (
   try {
     const secret: string | undefined =
       process.env.NODE_ENV === "production"
-        ? process.env.JWT_SECRET
-        : process.env.JWT_SECRET_STAGING;
+        ? process.env.JWT_TOKEN_SECRET
+        : process.env.JWT_TOKEN_SECRET_STAGING;
 
     if (!secret) throw new Error("JWT secret not found");
     const decoded = jwt.verify(token, secret) as JwtPayload;

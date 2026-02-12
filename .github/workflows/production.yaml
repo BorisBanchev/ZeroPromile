@@ -9,8 +9,10 @@ permissions:
 
 env:
   IMAGE_NAME: ghcr.io/borisbanchev/zeropromile-api
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  JWT_TOKEN_SECRET: ${{ secrets.JWT_TOKEN_SECRET }}
+  JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
   JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+  REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
 
 jobs:
   build-test-migrate-deploy:

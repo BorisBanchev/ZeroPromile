@@ -1,4 +1,6 @@
 import { prisma } from "../config/db";
+import * as jwt from "jsonwebtoken";
+import { JwtPayload } from "../types/token";
 import bcrypt from "bcryptjs";
 import {
   RegisterRequestBody,
@@ -9,6 +11,7 @@ import {
 import { ErrorResponseBody } from "../types/errorResponse";
 import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
+import { generateRefreshToken } from "../utils/generateRefreshToken";
 import { Gender } from "../generated/prisma/enums";
 
 const register = async (
@@ -42,14 +45,8 @@ const register = async (
     },
   });
 
-  const token = generateToken(user.id);
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  });
+  const accessToken = generateToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
 
   return res.status(201).json({
     status: "success",
@@ -61,7 +58,8 @@ const register = async (
         gender: gender,
         weightKg: weightKg,
       },
-      token,
+      accessToken,
+      refreshToken,
     },
   });
 };
@@ -90,14 +88,8 @@ const login = async (
     });
   }
 
-  const token = generateToken(user.id);
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  });
+  const accessToken = generateToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
 
   return res.status(201).json({
     status: "success",
@@ -106,23 +98,62 @@ const login = async (
         id: user.id,
         email: email,
       },
-      token,
+      accessToken,
+      refreshToken,
     },
   });
 };
 
+const refreshTokenEndpoint = async (
+  req: Request<unknown, unknown, { refreshToken: string }>,
+  res: Response,
+): Promise<Response> => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ error: "Refresh token required" });
+  }
+
+  try {
+    const secret: string | undefined =
+      process.env.NODE_ENV === "production"
+        ? process.env.REFRESH_TOKEN_SECRET
+        : process.env.REFRESH_TOKEN_SECRET_STAGING;
+
+    if (!secret) throw new Error("REFRESH_TOKEN_SECRET not found");
+
+    const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: "User no longer exists" });
+    }
+
+    const accessToken = generateToken(decoded.id);
+
+    return res.json({
+      status: "success",
+      data: {
+        accessToken,
+      },
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(401).json({ error: "Invalid refresh token" });
+    }
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 const logout = (_req: Request, res: Response): Response => {
-  res.cookie("jwt", "", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/",
-    expires: new Date(0),
-  });
+  // logout is handled on the client by deleting tokens
   return res.status(200).json({
     status: "success",
     message: "Logged out successfully",
   });
 };
 
-export { register, login, logout };
+export { register, login, logout, refreshTokenEndpoint };

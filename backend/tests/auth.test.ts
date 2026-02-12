@@ -47,6 +47,10 @@ describe("POST /api/auth/register", () => {
     expect(res.body.data.user.email).toBe(TEST_USER.email);
     expect(res.body.data.user.gender).toBe(TEST_USER.gender);
     expect(res.body.data.user.weightKg).toBe(TEST_USER.weightKg);
+    expect(res.body.data).toHaveProperty("accessToken");
+    expect(res.body.data).toHaveProperty("refreshToken");
+    expect(typeof res.body.data.accessToken).toBe("string");
+    expect(typeof res.body.data.refreshToken).toBe("string");
 
     const dbUser = await prisma.user.findUnique({
       where: { email: TEST_USER.email },
@@ -106,7 +110,7 @@ describe("POST /api/auth/login", () => {
     expect(res.body).toHaveProperty("error", "Invalid email or password");
   });
 
-  it("logs in the user with correct credentials and returns user & token", async () => {
+  it("logs in the user with correct credentials and returns user & tokens", async () => {
     const res = await request(app)
       .post("/api/auth/login")
       .send({ email: LOGIN_USER.email, password: LOGIN_USER.password })
@@ -115,8 +119,10 @@ describe("POST /api/auth/login", () => {
     expect(res.body.status).toBe("success");
     expect(res.body.data.user).toHaveProperty("id");
     expect(res.body.data.user.email).toBe(LOGIN_USER.email);
-    expect(res.body.data).toHaveProperty("token");
-    expect(typeof res.body.data.token).toBe("string");
+    expect(res.body.data).toHaveProperty("accessToken");
+    expect(res.body.data).toHaveProperty("refreshToken");
+    expect(typeof res.body.data.accessToken).toBe("string");
+    expect(typeof res.body.data.refreshToken).toBe("string");
   });
 });
 
@@ -143,26 +149,19 @@ describe("POST /api/auth/logout", () => {
       .send(LOGOUT_USER)
       .expect(201);
 
-    const setCookie = registerRes.headers["set-cookie"];
-    expect(setCookie).toBeDefined();
+    const accessToken = registerRes.body.data.accessToken;
+    expect(accessToken).toBeDefined();
+    expect(typeof accessToken).toBe("string");
 
     const logoutRes = await request(app)
       .post("/api/auth/logout")
-      .set("Cookie", Array.isArray(setCookie) ? setCookie : String(setCookie))
+      .set("Authorization", `Bearer ${accessToken}`)
       .expect(200);
 
     expect(logoutRes.body.status).toBe("success");
-    const cleared = logoutRes.headers["set-cookie"];
-    expect(cleared).toBeDefined();
-    const cookieHeader = Array.isArray(cleared)
-      ? cleared.join("; ")
-      : String(cleared);
-    expect(cookieHeader).toMatch(/jwt=/);
-    expect(cookieHeader).toMatch(/Expires=Thu, 01 Jan 1970|Max-Age=0/i);
 
     const protectedRes = await request(app)
       .patch("/api/update/profile")
-      .set("Cookie", cookieHeader)
       .send({ gender: "male", weight: 75 })
       .expect(401);
 

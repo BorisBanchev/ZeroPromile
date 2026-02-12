@@ -9,8 +9,10 @@ permissions:
 
 env:
   IMAGE_NAME: ghcr.io/borisbanchev/zeropromile-api-staging
-  JWT_SECRET_STAGING: ${{ secrets.JWT_SECRET_STAGING }}
+  JWT_TOKEN_SECRET_STAGING: ${{ secrets.JWT_TOKEN_SECRET_STAGING }}
+  JWT_REFRESH_TOKEN_SECRET_STAGING: ${{ secrets.JWT_REFRESH_TOKEN_SECRET_STAGING }}
   JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+  REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
 
 jobs:
   build-test-migrate-deploy:

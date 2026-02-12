@@ -19,7 +19,7 @@ const TEST_USER_FEMALE = {
   weightKg: 60,
 };
 
-let cookieHeader: string | undefined;
+let accessToken: string | undefined;
 let userId: string | undefined;
 
 beforeAll(async () => {
@@ -33,11 +33,7 @@ beforeAll(async () => {
     .expect(201);
 
   userId = registered.body.data.user.id;
-
-  const setCookie = registered.headers["set-cookie"];
-  cookieHeader = Array.isArray(setCookie)
-    ? setCookie.map((c) => c.split(";")[0]).join("; ")
-    : String(setCookie).split(";")[0];
+  accessToken = registered.body.data.accessToken;
 });
 
 beforeEach(async () => {
@@ -55,7 +51,7 @@ afterAll(async () => {
 });
 describe("POST /api/sessions", () => {
   it("creates session and first drink when authenticated", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Evening Session",
@@ -64,7 +60,7 @@ describe("POST /api/sessions", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(201);
 
@@ -109,7 +105,7 @@ describe("POST /api/sessions", () => {
   });
 
   it("returns 400 when there is already an active session", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const first = {
       sessionName: "First Session",
@@ -118,7 +114,7 @@ describe("POST /api/sessions", () => {
 
     await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(first)
       .expect(201);
 
@@ -129,7 +125,7 @@ describe("POST /api/sessions", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(second)
       .expect(400);
 
@@ -140,7 +136,7 @@ describe("POST /api/sessions", () => {
   });
 
   it("returns 400 when drink object is missing from request body", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Invalid Session",
@@ -148,7 +144,7 @@ describe("POST /api/sessions", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
   });
@@ -156,7 +152,7 @@ describe("POST /api/sessions", () => {
 
 describe("POST /api/sessions/drinks", () => {
   it("adds second drink to active session and updates BAC calculation", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const firstDrink = {
       sessionName: "Party Session",
@@ -165,7 +161,7 @@ describe("POST /api/sessions/drinks", () => {
     // start a session
     const sessionRes = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(firstDrink)
       .expect(201);
 
@@ -179,7 +175,7 @@ describe("POST /api/sessions/drinks", () => {
 
     const addDrinkRes = await request(app)
       .post("/api/sessions/drinks")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(secondDrink)
       .expect(201);
 
@@ -227,7 +223,7 @@ describe("POST /api/sessions/drinks", () => {
   });
 
   it("returns 404 when no active session exists", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       drink: { name: "Whiskey", volumeMl: 40, abv: 43 },
@@ -235,7 +231,7 @@ describe("POST /api/sessions/drinks", () => {
 
     const res = await request(app)
       .post("/api/sessions/drinks")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(404);
 
@@ -252,9 +248,7 @@ describe("Edge cases for BAC calculation", () => {
       .send(TEST_USER_FEMALE)
       .expect(201);
 
-    const femaleCookie = Array.isArray(femaleReg.headers["set-cookie"])
-      ? femaleReg.headers["set-cookie"].map((c) => c.split(";")[0]).join("; ")
-      : String(femaleReg.headers["set-cookie"]).split(";")[0];
+    const femaleToken = femaleReg.body.data.accessToken;
 
     const body = {
       sessionName: "Female User Session",
@@ -263,13 +257,13 @@ describe("Edge cases for BAC calculation", () => {
 
     const femaleRes = await request(app)
       .post("/api/sessions")
-      .set("Cookie", femaleCookie)
+      .set("Authorization", `Bearer ${femaleToken}`)
       .send(body)
       .expect(201);
 
     const maleRes = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader!)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(201);
 
@@ -284,7 +278,7 @@ describe("Edge cases for BAC calculation", () => {
   });
 
   it("accumulates BAC correctly with multiple drinks", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Multi Drink Session",
@@ -293,7 +287,7 @@ describe("Edge cases for BAC calculation", () => {
 
     const firstRes = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(201);
 
@@ -303,13 +297,13 @@ describe("Edge cases for BAC calculation", () => {
 
     await request(app)
       .post("/api/sessions/drinks")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send({ drink: { name: "Beer 2", volumeMl: 330, abv: 5 } })
       .expect(201);
 
     const thirdRes = await request(app)
       .post("/api/sessions/drinks")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send({ drink: { name: "Beer 3", volumeMl: 330, abv: 5 } })
       .expect(201);
 
@@ -335,7 +329,7 @@ describe("Edge cases for BAC calculation", () => {
   });
 
   it("rejects drinks with invalid ABV (over 100%)", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Invalid ABV Session",
@@ -344,7 +338,7 @@ describe("Edge cases for BAC calculation", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
 
@@ -357,7 +351,7 @@ describe("Edge cases for BAC calculation", () => {
   });
 
   it("rejects drinks with negative volume", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Invalid Volume Session",
@@ -366,7 +360,7 @@ describe("Edge cases for BAC calculation", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
 
@@ -379,7 +373,7 @@ describe("Edge cases for BAC calculation", () => {
   });
 
   it("rejects drinks with zero ABV", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Zero ABV Session",
@@ -388,7 +382,7 @@ describe("Edge cases for BAC calculation", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
 
@@ -400,7 +394,7 @@ describe("Edge cases for BAC calculation", () => {
     );
   });
   it("calculates BAC as 0 after sufficient time has elapsed for metabolism", async () => {
-    if (!cookieHeader) throw new Error("Missing auth cookie");
+    if (!accessToken) throw new Error("Missing access token");
 
     const body = {
       sessionName: "Metabolized Session",
@@ -409,7 +403,7 @@ describe("Edge cases for BAC calculation", () => {
 
     const res = await request(app)
       .post("/api/sessions")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(201);
 
