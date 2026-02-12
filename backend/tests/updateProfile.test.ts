@@ -28,15 +28,13 @@ describe("PATCH /api/update/profile", () => {
       .send(TEST_USER)
       .expect(201);
 
-    const setCookie = registeredUser.headers["set-cookie"];
-    expect(setCookie).toBeDefined();
-    const cookieHeader = Array.isArray(setCookie)
-      ? setCookie.join("; ")
-      : String(setCookie);
+    const accessToken = registeredUser.body.data.accessToken;
+    expect(accessToken).toBeDefined();
+    expect(typeof accessToken).toBe("string");
 
     const updatedUser = await request(app)
       .patch("/api/update/profile")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send({ gender: "male", weight: 80 })
       .expect(200);
 
@@ -57,15 +55,13 @@ describe("PATCH /api/update/profile", () => {
       .send({ email: TEST_USER.email, password: TEST_USER.password })
       .expect(201);
 
-    const setCookie = loginRes.headers["set-cookie"];
-    expect(setCookie).toBeDefined();
-    const cookieHeader = Array.isArray(setCookie)
-      ? setCookie.map((c) => c.split(";")[0]).join("; ")
-      : String(setCookie).split(";")[0];
+    const accessToken = loginRes.body.data.accessToken;
+    expect(accessToken).toBeDefined();
+    expect(typeof accessToken).toBe("string");
 
     const res = await request(app)
       .patch("/api/update/profile")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send({ gender: "invalid", weight: 80 })
       .expect(400);
 
@@ -91,15 +87,13 @@ describe("PATCH /api/update/profile", () => {
       .send({ email: TEST_USER.email, password: TEST_USER.password })
       .expect(201);
 
-    const setCookie = loginRes.headers["set-cookie"];
-    expect(setCookie).toBeDefined();
-    const cookieHeader = Array.isArray(setCookie)
-      ? setCookie.map((c) => c.split(";")[0]).join("; ")
-      : String(setCookie).split(";")[0];
+    const accessToken = loginRes.body.data.accessToken;
+    expect(accessToken).toBeDefined();
+    expect(typeof accessToken).toBe("string");
 
     const res = await request(app)
       .patch("/api/update/profile")
-      .set("Cookie", cookieHeader)
+      .set("Authorization", `Bearer ${accessToken}`)
       .send({ gender: "male", weight: -200 })
       .expect(400);
 

@@ -20,7 +20,8 @@ export interface RegisterResponseBody {
       gender: Gender;
       weightKg: number;
     };
-    token: string;
+    accessToken: string;
+    refreshToken: string;
   };
 }
 
@@ -35,6 +36,7 @@ export interface LoginResponseBody {
       id: string;
       email: string;
     };
-    token: string;
+    accessToken: string;
+    refreshToken: string;
   };
 }
