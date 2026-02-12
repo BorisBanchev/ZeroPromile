@@ -54,7 +54,12 @@ jobs:
 
       - name: Run tests
         env:
+          NODE_ENV: test
           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          JWT_TOKEN_SECRET_STAGING: ${{ secrets.JWT_TOKEN_SECRET_STAGING }}
+          JWT_REFRESH_TOKEN_SECRET_STAGING: ${{ secrets.JWT_REFRESH_TOKEN_SECRET_STAGING }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.REFRESH_TOKEN_EXPIRES_IN }}
         run: |
           cd backend
           npm run test
