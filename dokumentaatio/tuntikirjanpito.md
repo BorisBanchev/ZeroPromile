@@ -18,4 +18,6 @@
 | 4.2.  | 2,5  | Lisää testejä sessionin luomiselle sekä BAC:n laskemisen rajatapauksille                                 |
 | 9.2.  | 3,5  | Lisää routet sessionin lopettamiselle, sessionejen datan saamiselle, sessionin timeline datan saamiselle |
 | 11.2. | 2    | Expo dokumentaation lukemista                                                                            |
-|  yht  | 43,5 |                                                                                                          |
+| 12.2. | 2    | Poista cookies-based auth, lisää accesstoken ja refreshtoken moobiilille sopivaksi, korjaa testit        |
+| 13.2. | 3,5  | Alustava kirjautuminen, rekisteröinti näkymät ja logiikka frontendille, tilanhallinta zustandilla        |
+|  yht  | 49   |                                                                                                          |
