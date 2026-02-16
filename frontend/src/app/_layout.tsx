@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { Stack } from "expo-router";
+import "./globals.css";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useAuthStore } from "../store/useAuthStore";
 
