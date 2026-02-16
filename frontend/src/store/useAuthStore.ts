@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 import { User, LoginCredentials, RegisterCredentials } from "../types/auth";
+import { useNotificationStore } from "./useNotificationStore";
 
 const API_URL: string | undefined = process.env.EXPO_PUBLIC_BACKEND_URL;
 
@@ -45,6 +46,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       await SecureStore.setItemAsync("refreshToken", refreshToken);
 
       set({ user, accessToken, refreshToken });
+      useNotificationStore.getState().setSuccess("Logged in successfully");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Login failed";
+      useNotificationStore.getState().setError(errorMessage);
+      return;
     } finally {
       set({ isLoading: false });
     }
@@ -71,6 +78,12 @@ export const useAuthStore = create<AuthState>((set) => ({
       await SecureStore.setItemAsync("refreshToken", refreshToken);
 
       set({ user, accessToken, refreshToken });
+      useNotificationStore.getState().setSuccess("Logged in successfully");
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Registration failed";
+      useNotificationStore.getState().setError(errorMessage);
+      return;
     } finally {
       set({ isLoading: false });
     }
@@ -81,6 +94,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     await SecureStore.deleteItemAsync("refreshToken");
 
     set({ user: null, accessToken: null, refreshToken: null });
+    useNotificationStore.getState().setSuccess("Logged out successfully");
   },
 
   initialize: async () => {
