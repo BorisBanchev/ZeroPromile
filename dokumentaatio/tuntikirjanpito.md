@@ -20,4 +20,5 @@
 | 11.2. | 2    | Expo dokumentaation lukemista                                                                            |
 | 12.2. | 2    | Poista cookies-based auth, lisää accesstoken ja refreshtoken moobiilille sopivaksi, korjaa testit        |
 | 13.2. | 3,5  | Alustava kirjautuminen, rekisteröinti näkymät ja logiikka frontendille, tilanhallinta zustandilla        |
-|  yht  | 49   |                                                                                                          |
+| 16.2. | 2    | Muokkaa frontendin boilerplate runkoa, konfiguroi tailwindcss, sivujen design pohtimista                 |
+|  yht  | 51   |                                                                                                          |
