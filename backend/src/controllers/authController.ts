@@ -18,7 +18,7 @@ const register = async (
   req: Request<unknown, unknown, RegisterRequestBody>,
   res: Response<RegisterResponseBody | ErrorResponseBody>,
 ): Promise<Response<RegisterResponseBody | ErrorResponseBody>> => {
-  const { name, email, password, gender, weightKg } = req.body;
+  const { name, email, password, passwordConfirm, gender, weightKg } = req.body;
 
   const userExists = await prisma.user.findUnique({
     where: { email: email },
@@ -27,6 +27,12 @@ const register = async (
   if (userExists) {
     return res.status(400).json({
       error: "User already exists with this email",
+    });
+  }
+
+  if (password !== passwordConfirm) {
+    return res.status(400).json({
+      error: "Passwords don't match",
     });
   }
 

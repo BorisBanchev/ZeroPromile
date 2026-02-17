@@ -7,6 +7,7 @@ const TEST_USER = {
   name: "test user",
   email: "test_user@test.com",
   password: "12345678",
+  passwordConfirm: "12345678",
   gender: "male",
   weightKg: 80,
 };

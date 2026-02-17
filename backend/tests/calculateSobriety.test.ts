@@ -8,6 +8,7 @@ const TEST_USER = {
   name: "session user",
   email: "session_user@test.com",
   password: "password123",
+  passwordConfirm: "password123",
   gender: "male",
   weightKg: 80,
 };
@@ -15,6 +16,7 @@ const TEST_USER_FEMALE = {
   name: "female user",
   email: "female_user@test.com",
   password: "password123",
+  passwordConfirm: "password123",
   gender: "female",
   weightKg: 60,
 };

@@ -24,6 +24,7 @@ describe("POST /api/auth/register", () => {
     name: "Test User1",
     email: "test_user1@example.com",
     password: "password123",
+    passwordConfirm: "password123",
     gender: "male",
     weightKg: 80,
   };
@@ -79,6 +80,7 @@ describe("POST /api/auth/login", () => {
     name: "Login User",
     email: "login_user@example.com",
     password: "password123",
+    passwordConfirm: "password123",
     gender: "male",
     weightKg: 80,
   };
@@ -131,6 +133,7 @@ describe("POST /api/auth/logout", () => {
     name: "Logout User",
     email: "logout_user@example.com",
     password: "password123",
+    passwordConfirm: "password123",
     gender: "male",
     weightKg: 80,
   };
