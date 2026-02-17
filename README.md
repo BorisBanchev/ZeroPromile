@@ -46,7 +46,7 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 
 ### 📱 Frontend
 
-- **React Native**
+- **React Native (Expo)**
 - **TypeScript**
 
 ### 🌐 Backend
@@ -59,7 +59,7 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 
 ### 🗄 Database
 
-- **PostgreSQL**
+- **PostgreSQL (Prisma ORM)**
 
 ### 🚀 DevOps / CI-CD
 
