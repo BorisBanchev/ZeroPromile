@@ -15,6 +15,7 @@ export interface RegisterCredentials {
   name: string;
   email: string;
   password: string;
-  gender: "male" | "female";
+  passwordConfirm: string;
+  gender: "male" | "female" | null;
   weightKg: number;
 }
