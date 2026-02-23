@@ -78,7 +78,9 @@ export const useAuthStore = create<AuthState>((set) => ({
       await SecureStore.setItemAsync("refreshToken", refreshToken);
 
       set({ user, accessToken, refreshToken });
-      useNotificationStore.getState().setSuccess("Logged in successfully");
+      useNotificationStore
+        .getState()
+        .setSuccess("Created account successfully");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Registration failed";

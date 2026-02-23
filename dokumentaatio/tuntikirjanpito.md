@@ -22,4 +22,5 @@
 | 13.2. | 3,5  | Alustava kirjautuminen, rekisteröinti näkymät ja logiikka frontendille, tilanhallinta zustandilla        |
 | 16.2. | 2    | Muokkaa frontendin boilerplate runkoa, konfiguroi tailwindcss, sivujen design pohtimista                 |
 | 17.2. | 3    | Login screenin implementointi, profiili screeniin lisätty log out ominaisuus                             |
-|  yht  | 54   |                                                                                                          |
+| 23.2. | 2,5  | Register screenin implementointi                                                                         |
+|  yht  | 56,5 |                                                                                                          |
