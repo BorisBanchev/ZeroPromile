@@ -345,11 +345,8 @@ describe("Edge cases for BAC calculation", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
-    expect(Array.isArray(res.body.error)).toBe(true);
-    expect(res.body.error[0]).toHaveProperty("message");
-    expect(String(res.body.error[0].message)).toMatch(
-      "Drink abv must be at most 100",
-    );
+    expect(typeof res.body.error).toBe("string");
+    expect(res.body.error).toMatch("Drink abv must be at most 100");
   });
 
   it("rejects drinks with negative volume", async () => {
@@ -367,9 +364,9 @@ describe("Edge cases for BAC calculation", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
-    expect(Array.isArray(res.body.error)).toBe(true);
-    expect(res.body.error[0]).toHaveProperty("message");
-    expect(String(res.body.error[0].message)).toMatch(
+    expect(res.body).toHaveProperty("error");
+    expect(typeof res.body.error).toBe("string");
+    expect(res.body.error).toMatch(
       "Drink amount in Ml must be a positive number",
     );
   });
@@ -389,11 +386,8 @@ describe("Edge cases for BAC calculation", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
-    expect(Array.isArray(res.body.error)).toBe(true);
-    expect(res.body.error[0]).toHaveProperty("message");
-    expect(String(res.body.error[0].message)).toMatch(
-      "Drink abv must be greater than 0",
-    );
+    expect(typeof res.body.error).toBe("string");
+    expect(res.body.error).toMatch("Drink abv must be greater than 0");
   });
   it("calculates BAC as 0 after sufficient time has elapsed for metabolism", async () => {
     if (!accessToken) throw new Error("Missing access token");

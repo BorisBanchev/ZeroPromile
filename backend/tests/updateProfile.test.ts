@@ -67,9 +67,8 @@ describe("PATCH /api/update/profile", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
-    expect(Array.isArray(res.body.error)).toBe(true);
-    expect(res.body.error[0]).toHaveProperty("message");
-    expect(String(res.body.error[0].message)).toMatch(
+    expect(typeof res.body.error).toBe("string");
+    expect(res.body.error).toMatch(
       "Invalid gender: Must be either male or female",
     );
 
@@ -99,11 +98,8 @@ describe("PATCH /api/update/profile", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
-    expect(Array.isArray(res.body.error)).toBe(true);
-    expect(res.body.error[0]).toHaveProperty("message");
-    expect(String(res.body.error[0].message)).toMatch(
-      "Weight must be a positive number",
-    );
+    expect(typeof res.body.error).toBe("string");
+    expect(res.body.error).toMatch("Weight must be a positive number");
 
     const dbUser = await prisma.user.findUnique({
       where: { email: TEST_USER.email },
