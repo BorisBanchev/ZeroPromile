@@ -84,6 +84,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Registration failed";
+      console.log(errorMessage);
       useNotificationStore.getState().setError(errorMessage);
       return;
     } finally {

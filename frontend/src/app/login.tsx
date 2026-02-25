@@ -36,6 +36,14 @@ export default function LoginScreen() {
     <>
       <StatusBar barStyle="light-content" backgroundColor="#0A1628" />
       <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top", "bottom"]}>
+        {notification && notification.type === "success" && (
+          <View className="mb-4 bg-green-500 border border-green-500 rounded-2xl px-4 py-3 flex-row items-center">
+            <Ionicons name="checkmark-circle-outline" size={20} color="green" />
+            <Text className="text-white ml-2 flex-1">
+              {notification.message}
+            </Text>
+          </View>
+        )}
         <View className="flex-1 px-6 justify-center">
           <View className="items-center mb-12">
             <View className="w-24 h-24 bg-[#2DD4BF] rounded-3xl items-center justify-center mb-5">

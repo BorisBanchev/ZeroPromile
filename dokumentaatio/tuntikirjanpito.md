@@ -23,4 +23,5 @@
 | 16.2. | 2    | Muokkaa frontendin boilerplate runkoa, konfiguroi tailwindcss, sivujen design pohtimista                 |
 | 17.2. | 3    | Login screenin implementointi, profiili screeniin lisätty log out ominaisuus                             |
 | 23.2. | 2,5  | Register screenin implementointi                                                                         |
-|  yht  | 56,5 |                                                                                                          |
+| 25.2. | 2    | Profiili screenin alustava implementointi mock datalla                                                   |
+|  yht  | 58,5 |                                                                                                          |
