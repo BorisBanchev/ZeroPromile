@@ -1,34 +1,55 @@
 import React from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useAuthStore } from "../../store/useAuthStore";
+import { ProfileHeader } from "@/src/components/profile/ProfileHeader";
+import { ProfileInfoRow } from "@/src/components/profile/ProfileInfoRow";
+import { EditProfileButton } from "@/src/components/profile/EditProfileButton";
+import LogoutButton from "@/src/components/profile/LogoutButton";
+
+const MOCK_USER = {
+  name: "Boris Banchev",
+  email: "boris@gmail.com",
+  weightKg: 85,
+  gender: "Male",
+};
 
 export default function ProfileScreen() {
-  const router = useRouter();
-  const logout = useAuthStore((state) => state.logout);
-
-  const handleLogout = async (): Promise<void> => {
-    await logout();
-    router.replace("/login");
+  const handleEditProfile = () => {
+    console.log("Edit profile pressed");
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top", "bottom"]}>
-      <View className="flex-1 px-6 py-8">
-        <Text className="text-white text-3xl font-bold mb-8">Profile</Text>
-
-        <TouchableOpacity
-          className="bg-red-500/20 border border-red-500 rounded-2xl py-4 flex-row items-center justify-center"
-          onPress={handleLogout}
-        >
-          <Ionicons name="log-out-outline" size={24} color="#EF4444" />
-          <Text className="text-red-500 text-lg font-semibold ml-2">
-            Log out
+    <SafeAreaView className="flex-1 bg-[#0A1628]">
+      <ScrollView className="flex-1">
+        <View className="p-4">
+          <Text className="text-[28px] font-bold text-white mb-6 mt-4">
+            Profile
           </Text>
-        </TouchableOpacity>
-      </View>
+
+          <View className="bg-[#354353b9] rounded-2xl overflow-hidden">
+            <ProfileHeader name={MOCK_USER.name} email={MOCK_USER.email} />
+            <ProfileInfoRow
+              icon="scale-outline"
+              label="Weight"
+              value={`${MOCK_USER.weightKg} kg`}
+            />
+            <ProfileInfoRow
+              icon={
+                MOCK_USER.gender === "Male" ? "man-outline" : "woman-outline"
+              }
+              label="Gender"
+              value={MOCK_USER.gender}
+            />
+            <View className="h-[1px] bg-[#2D3748] mx-4" />
+
+            <EditProfileButton onPress={handleEditProfile} />
+          </View>
+          <LogoutButton />
+          <Text className="text-[12px] text-gray-500 text-center mt-6 mb-8 px-4">
+            Your data is used only for BAC calculations and is stored securely.
+          </Text>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
