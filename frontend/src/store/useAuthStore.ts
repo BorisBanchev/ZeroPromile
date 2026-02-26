@@ -2,8 +2,7 @@ import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 import { User, LoginCredentials, RegisterCredentials } from "../types/auth";
 import { useNotificationStore } from "./useNotificationStore";
-
-const API_URL: string | undefined = process.env.EXPO_PUBLIC_BACKEND_URL;
+import { API_URL } from "../config/apiUrl";
 
 interface AuthState {
   user: User | null;

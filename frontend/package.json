@@ -3,11 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start:dev": "EXPO_PUBLIC_NODE_ENV=development expo start",
+    "start:staging": "EXPO_PUBLIC_NODE_ENV=staging expo start",
+    "start:prod": "EXPO_PUBLIC_NODE_ENV=production expo start",
     "lint": "expo lint"
   },
   "dependencies": {
