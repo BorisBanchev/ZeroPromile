@@ -36,6 +36,9 @@ export interface LoginResponseBody {
     user: {
       id: string;
       email: string;
+      name: string;
+      gender: string;
+      weightKg: number;
     };
     accessToken: string;
     refreshToken: string;

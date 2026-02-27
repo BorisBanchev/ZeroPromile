@@ -102,7 +102,10 @@ const login = async (
     data: {
       user: {
         id: user.id,
+        name: user.name,
         email: email,
+        gender: user.gender,
+        weightKg: user.weightKg,
       },
       accessToken,
       refreshToken,
