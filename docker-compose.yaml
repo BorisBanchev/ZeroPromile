@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: zeropromile-db
+    environment:
+      POSTGRES_USER: zeropromile
+      POSTGRES_PASSWORD: devpassword
+      POSTGRES_DB: zeropromile
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zeropromile"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: node:20-alpine
+    container_name: zeropromile-backend
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      DEV_DATABASE_URL: postgresql://zeropromile:devpassword@db:5432/zeropromile
+      JWT_TOKEN_SECRET_STAGING: "local_dev_staging_secret"
+      JWT_REFRESH_TOKEN_SECRET_STAGING: "local_dev_staging_refresh_secret"
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "npm install && npx prisma generate && npx prisma migrate dev --name init && npm run dev"
+
+volumes:
+  postgres_data:
