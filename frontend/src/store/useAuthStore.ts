@@ -45,7 +45,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       await SecureStore.setItemAsync("refreshToken", refreshToken);
 
       set({ user, accessToken, refreshToken });
-      useNotificationStore.getState().setSuccess("Logged in successfully");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Login failed";
@@ -77,9 +76,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       await SecureStore.setItemAsync("refreshToken", refreshToken);
 
       set({ user, accessToken, refreshToken });
-      useNotificationStore
-        .getState()
-        .setSuccess("Created account successfully");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Registration failed";

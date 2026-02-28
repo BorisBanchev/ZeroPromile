@@ -6,13 +6,11 @@ import { ProfileInfoRow } from "@/src/components/profile/ProfileInfoRow";
 import { EditProfileButton } from "@/src/components/profile/EditProfileButton";
 import { EditProfileView } from "@/src/components/profile/EditProfileView";
 import LogoutButton from "@/src/components/profile/LogoutButton";
+import { Notification } from "@/src/components/ui/Notification";
 import { useAuthStore } from "@/src/store/useAuthStore";
-import { useNotificationStore } from "@/src/store/useNotificationStore";
-import { Ionicons } from "@expo/vector-icons";
 
 export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
-  const notification = useNotificationStore((state) => state.notification);
   const [showEditProfileView, setShowEditProfileView] = useState(false);
 
   const handleEditProfile = () => {
@@ -34,18 +32,7 @@ export default function ProfileScreen() {
           <Text className="text-[28px] font-bold text-white mb-6 mt-4">
             Profile
           </Text>
-          {notification && notification.type === "success" && (
-            <View className="mb-4 bg-green-500 border border-green-500 rounded-2xl px-4 py-3 flex-row items-center">
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={20}
-                color="green"
-              />
-              <Text className="text-white ml-2 flex-1">
-                {notification.message}
-              </Text>
-            </View>
-          )}
+          <Notification />
           {showEditProfileView ? (
             <EditProfileView
               user={user}
