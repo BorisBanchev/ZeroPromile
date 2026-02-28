@@ -13,12 +13,28 @@ export const AuthFooter = ({ description, navigateText }: AuthFooterProps) => {
     router.push("/register");
   };
 
+  const navigateToLogin = (): void => {
+    router.push("/login");
+  };
+  const isLoginFooter = navigateText === "Sign Up";
+
   return (
     <>
-      <Text className="text-[#94A3B8]">{description} </Text>
-      <TouchableOpacity onPress={navigateToRegister}>
-        <Text className="text-[#2DD4BF] font-semibold">{navigateText}</Text>
-      </TouchableOpacity>
+      {isLoginFooter ? (
+        <>
+          <Text className="text-[#94A3B8]">{description} </Text>
+          <TouchableOpacity onPress={navigateToRegister}>
+            <Text className="text-[#2DD4BF] font-semibold">{navigateText}</Text>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <>
+          <Text className="text-[#94A3B8]">{description} </Text>
+          <TouchableOpacity onPress={navigateToLogin}>
+            <Text className="text-[#2DD4BF] font-semibold">{navigateText}</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </>
   );
 };

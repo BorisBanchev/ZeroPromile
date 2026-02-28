@@ -28,7 +28,7 @@ export const PasswordInput = ({
         value={password}
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
-        autoComplete="password"
+        autoComplete="off"
         className="flex-1 text-white text-base"
       />
       <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "../store/useAuthStore";
 import { LoginCredentials } from "../types/auth";
 import { Notification } from "../components/ui/Notification";
-import { LoginPageHeader } from "../components/auth/LoginPageHeader";
+import { AuthHeader } from "../components/auth/AuthHeader";
 import { EmailInput } from "../components/auth/EmailInput";
 import { PasswordInput } from "../components/auth/PasswordInput";
 import { AuthButton } from "../components/auth/AuthButton";
@@ -27,9 +27,9 @@ export default function LoginScreen() {
       <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top", "bottom"]}>
         <Notification />
         <View className="flex-1 px-6 justify-center">
-          <LoginPageHeader
+          <AuthHeader
             LogoText="ZP"
-            header={["Zero", "Promile"]}
+            headerBluish={["Zero", "Promile"]}
             subheader="Know when you are safe"
           />
           <View className="mb-4">
@@ -48,13 +48,13 @@ export default function LoginScreen() {
             isLoading={isLoading}
             email={email}
             password={password}
-            buttonText="Sign In ->"
-            loadingButtonText="Signing In..."
+            buttonText="Login ->"
+            loadingButtonText="Logging In..."
           />
           <View className="flex-row justify-center">
             <AuthFooter
               description="Do not have an account?"
-              navigateText="Sign up"
+              navigateText="Sign Up"
             />
           </View>
         </View>

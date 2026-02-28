@@ -19,7 +19,7 @@ export const AuthButton = ({
   buttonText,
   loadingButtonText,
 }: AuthButtonProps) => {
-  const isLoginButton = buttonText === "Sign In →";
+  const isLoginButton = buttonText === "Login ->";
   return (
     <>
       {isLoginButton ? (
