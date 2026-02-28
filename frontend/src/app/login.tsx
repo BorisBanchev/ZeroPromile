@@ -11,14 +11,12 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useAuthStore } from "../store/useAuthStore";
-import { useNotificationStore } from "../store/useNotificationStore";
 import { LoginCredentials } from "../types/auth";
+import { Notification } from "../components/ui/Notification";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { login, isLoading } = useAuthStore();
-  const notification = useNotificationStore((state) => state.notification);
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -36,14 +34,7 @@ export default function LoginScreen() {
     <>
       <StatusBar barStyle="light-content" backgroundColor="#0A1628" />
       <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top", "bottom"]}>
-        {notification && notification.type === "success" && (
-          <View className="mb-4 bg-green-500 border border-green-500 rounded-2xl px-4 py-3 flex-row items-center">
-            <Ionicons name="checkmark-circle-outline" size={20} color="green" />
-            <Text className="text-white ml-2 flex-1">
-              {notification.message}
-            </Text>
-          </View>
-        )}
+        <Notification />
         <View className="flex-1 px-6 justify-center">
           <View className="items-center mb-12">
             <View className="w-24 h-24 bg-[#2DD4BF] rounded-3xl items-center justify-center mb-5">
@@ -56,16 +47,6 @@ export default function LoginScreen() {
               Know when you&apos;re safe
             </Text>
           </View>
-
-          {notification && notification.type === "error" && (
-            <View className="mb-4 bg-red-500/20 border border-red-500 rounded-2xl px-4 py-3 flex-row items-center">
-              <Ionicons name="alert-circle-outline" size={20} color="#EF4444" />
-              <Text className="text-red-500 ml-2 flex-1">
-                {notification.message}
-              </Text>
-            </View>
-          )}
-
           <View className="mb-4">
             <View className="bg-[#0F1E2E] border border-[#1E3A52] rounded-2xl px-4 py-4 flex-row items-center">
               <MaterialCommunityIcons

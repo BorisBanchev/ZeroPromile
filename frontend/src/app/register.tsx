@@ -13,12 +13,11 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { RegisterCredentials } from "../types/auth";
 import { useAuthStore } from "../store/useAuthStore";
-import { useNotificationStore } from "../store/useNotificationStore";
+import { Notification } from "../components/ui/Notification";
+
 export default function RegisterScreen() {
   const router = useRouter();
   const { register, isLoading } = useAuthStore();
-  const notification = useNotificationStore((state) => state.notification);
-
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -70,14 +69,7 @@ export default function RegisterScreen() {
             </Text>
           </View>
 
-          {notification && notification.type === "error" && (
-            <View className="mb-4 bg-red-500/20 border border-red-500 rounded-2xl px-4 py-3 flex-row items-center">
-              <Ionicons name="alert-circle-outline" size={20} color="#EF4444" />
-              <Text className="text-red-500 ml-2 flex-1">
-                {notification.message}
-              </Text>
-            </View>
-          )}
+          <Notification />
 
           <View className="mb-4">
             <View className="bg-[#0F1E2E] border border-[#1E3A52] rounded-2xl px-4 py-4 flex-row items-center">

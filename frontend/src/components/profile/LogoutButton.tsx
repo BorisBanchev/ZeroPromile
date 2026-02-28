@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, Text, View, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuthStore } from "@/src/store/useAuthStore";
-import { CustomAlert } from "../ui/alert";
+import { CustomAlert } from "../ui/CustomAlert";
 
 export default function LogoutButton() {
   const logout = useAuthStore((state) => state.logout);
