@@ -43,7 +43,7 @@ export default function RegisterScreen() {
   };
 
   const isFormValid =
-    fullName && email && password && confirmPassword && gender && weight;
+    !!fullName && !!email && !!password && !!gender && !!weight;
 
   return (
     <>
