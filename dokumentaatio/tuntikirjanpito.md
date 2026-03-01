@@ -26,4 +26,6 @@
 | 25.2. | 2    | Profiili screenin alustava implementointi mock datalla                                                                       |
 | 26.2. | 2    | tab bar muokkaamista tyyleihin sopivaksi, custom alert modal kirjautuessa ulos, ympäristöjen konfigurointi                   |
 | 27.2. | 3,5  | Lisää docker compose backendille ja tietokannalle, dokumentaatio käynnistykselle paikallisesti, profile screenin viimeistely |
-|  yht  | 64   |                                                                                                                              |
+| 28.2. | 2,5  | Login ja Register screenien refaktorointi omiin komponentteihin                                                              |
+| 1.3.  | 3    | Etusivun alustava näkymä                                                                                                     |
+|  yht  | 69,5 |                                                                                                                              |

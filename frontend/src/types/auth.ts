@@ -2,7 +2,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  gender: "MALE" | "FEMALE";
+  gender: "male" | "female";
   weightKg: number;
 }
 
