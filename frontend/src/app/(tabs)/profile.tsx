@@ -11,6 +11,7 @@ import { useAuthStore } from "@/src/store/useAuthStore";
 
 export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
+  console.log(user);
   const [showEditProfileView, setShowEditProfileView] = useState(false);
 
   const handleEditProfile = () => {
@@ -49,10 +50,10 @@ export default function ProfileScreen() {
                 />
                 <ProfileInfoRow
                   icon={
-                    user.gender === "MALE" ? "man-outline" : "woman-outline"
+                    user.gender === "male" ? "man-outline" : "woman-outline"
                   }
                   label="Gender"
-                  value={user.gender === "MALE" ? "Male" : "Female"}
+                  value={user.gender === "male" ? "Male" : "Female"}
                 />
                 <View className="h-[1px] bg-[#2D3748] mx-4" />
 

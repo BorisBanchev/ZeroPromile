@@ -19,7 +19,7 @@ interface EditProfileViewProps {
 
 export const EditProfileView = ({ user, onClose }: EditProfileViewProps) => {
   const [weightKg, setWeightKg] = useState(user.weightKg.toString());
-  const [gender, setGender] = useState<"MALE" | "FEMALE">(user.gender);
+  const [gender, setGender] = useState<"male" | "female">(user.gender);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -50,7 +50,7 @@ export const EditProfileView = ({ user, onClose }: EditProfileViewProps) => {
       useAuthStore.setState({
         user: {
           ...user,
-          gender: response.data.gender as "MALE" | "FEMALE",
+          gender: response.data.gender.toLocaleLowerCase() as "male" | "female",
           weightKg: response.data.weightKg,
         },
       });
@@ -89,9 +89,9 @@ export const EditProfileView = ({ user, onClose }: EditProfileViewProps) => {
         </Text>
         <View className="flex-row gap-3">
           <TouchableOpacity
-            onPress={() => setGender("MALE")}
+            onPress={() => setGender("male")}
             className={`flex-1 py-4 rounded-lg items-center ${
-              gender === "MALE" ? "bg-[#2DD4BF]" : "bg-[#2D3748]"
+              gender === "male" ? "bg-[#2DD4BF]" : "bg-[#2D3748]"
             }`}
           >
             <Text className="text-2xl mb-1">🧔</Text>
@@ -99,9 +99,9 @@ export const EditProfileView = ({ user, onClose }: EditProfileViewProps) => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setGender("FEMALE")}
+            onPress={() => setGender("female")}
             className={`flex-1 py-4 rounded-lg items-center ${
-              gender === "FEMALE" ? "bg-red-500" : "bg-[#2D3748]"
+              gender === "female" ? "bg-red-500" : "bg-[#2D3748]"
             }`}
           >
             <Text className="text-2xl mb-1">👩</Text>

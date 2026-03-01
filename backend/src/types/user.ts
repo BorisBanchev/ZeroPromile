@@ -18,7 +18,7 @@ export interface RegisterResponseBody {
       id: string;
       name: string;
       email: string;
-      gender: Gender;
+      gender: string;
       weightKg: number;
     };
     accessToken: string;
