@@ -22,7 +22,7 @@ export const ActionButton = ({
       activeOpacity={0.8}
     >
       <Text
-        className={`text-lg font-semibold ${
+        className={`text-lg font-bold ${
           variant === "primary" ? "text-white" : "text-gray-300"
         }`}
       >

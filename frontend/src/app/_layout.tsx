@@ -42,7 +42,12 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="modals/start-session"
-            options={{ presentation: "modal" }}
+            options={{
+              presentation: "transparentModal",
+              animation: "fade",
+              headerShown: false,
+              contentStyle: { backgroundColor: "transparent" },
+            }}
           />
           <Stack.Screen name="session/[id]" />
         </Stack.Protected>

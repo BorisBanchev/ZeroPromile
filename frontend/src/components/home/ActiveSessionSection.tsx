@@ -26,36 +26,35 @@ export const ActiveSessionSection = ({
   onEndSession,
 }: ActiveSessionSectionProps) => {
   return (
-    <>
+    <View className="px-14 pb-5">
       {isSober ? (
         <SoberStatusCard />
       ) : (
-        <View className="px-14 pb-5">
-          <TimeToSobrietyCard
-            hours={hours}
-            minutes={minutes}
-            seconds={seconds}
-            soberTime={soberTime}
-          />
-          <View className="mt-8">
-            <DrinksCounter count={drinkCount} />
-          </View>
-          <View className="mt-4">
-            <ActionButton
-              onPress={onAddDrink}
-              title="+ Add Drink"
-              variant="primary"
-            />
-          </View>
-          <View className="mt-4">
-            <ActionButton
-              onPress={onEndSession}
-              title="End Session"
-              variant="secondary"
-            />
-          </View>
-        </View>
+        <TimeToSobrietyCard
+          hours={hours}
+          minutes={minutes}
+          seconds={seconds}
+          soberTime={soberTime}
+        />
       )}
-    </>
+
+      <View className="mt-8">
+        <DrinksCounter count={drinkCount} />
+      </View>
+      <View className="mt-4">
+        <ActionButton
+          onPress={onAddDrink}
+          title="+ Add Drink"
+          variant="primary"
+        />
+      </View>
+      <View className="mt-4">
+        <ActionButton
+          onPress={onEndSession}
+          title="End Session"
+          variant="secondary"
+        />
+      </View>
+    </View>
   );
 };
