@@ -25,27 +25,15 @@ export interface TimeUntilSoberResult {
 
 export interface StartSessionRequestBody {
   sessionName: string;
-  drink: {
-    name: string;
-    volumeMl: number;
-    abv: number;
-  };
 }
 
 export interface StartSessionResponseBody {
   status: string;
   message: string;
   data: {
+    sessionId: string;
     sessionName: string;
-    drink: {
-      name: string;
-      volumeMl: number;
-      abv: number;
-    };
-    timeUntilSobriety: {
-      hours: number;
-      minutes: number;
-    };
+    active: boolean;
   };
 }
 

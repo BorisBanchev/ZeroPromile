@@ -27,7 +27,7 @@ export const startSession = async (
     return res.status(401).json({ error: "Not authorized" });
   }
 
-  const { sessionName, drink } = req.body;
+  const { sessionName } = req.body;
 
   // check that no other active session exists
   try {
@@ -46,63 +46,22 @@ export const startSession = async (
     return res.status(500).json({ error: "Failed checking active sessions" });
   }
 
-  const volumeMl: number = drink.volumeMl;
-  const abv: number = drink.abv;
-
-  const distributionFactor: number =
-    req.user.gender === PrismaGender.MALE ? 0.68 : 0.55;
-  const weightKg: number = req.user.weightKg;
-
-  const bacContribution: number = drinkToBAC(
-    volumeMl,
-    abv,
-    weightKg,
-    distributionFactor,
-  );
-
   try {
     const newSession = await prisma.session.create({
       data: {
         userId: req.user.id,
         name: sessionName,
-        drinks: {
-          create: {
-            name: drink.name,
-            volumeMl,
-            abv,
-            bacContribution,
-            consumedAt: new Date(),
-          },
-        },
-      },
-      include: {
-        drinks: true,
+        active: true,
       },
     });
 
-    const drinksForCalc = newSession.drinks.map((d) => ({
-      time: new Date(d.consumedAt).getTime(),
-      bac: d.bacContribution ?? 0,
-    }));
-
-    const nowMs = Date.now();
-    const totalPromilles = currentBAC(drinksForCalc, nowMs);
-    const sober = timeUntilSober(totalPromilles);
-
     return res.status(201).json({
       status: "success",
-      message: "Session started",
+      message: "Session started successfully",
       data: {
-        sessionName,
-        drink: {
-          name: drink.name,
-          volumeMl,
-          abv,
-        },
-        timeUntilSobriety: {
-          hours: sober.untilSober.hours,
-          minutes: sober.untilSober.minutes,
-        },
+        sessionId: newSession.id,
+        sessionName: newSession.name,
+        active: newSession.active,
       },
     });
   } catch (err: unknown) {

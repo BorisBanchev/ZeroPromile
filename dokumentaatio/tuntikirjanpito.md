@@ -28,4 +28,5 @@
 | 27.2. | 3,5  | Lisää docker compose backendille ja tietokannalle, dokumentaatio käynnistykselle paikallisesti, profile screenin viimeistely |
 | 28.2. | 2,5  | Login ja Register screenien refaktorointi omiin komponentteihin                                                              |
 | 1.3.  | 3    | Etusivun alustava näkymä                                                                                                     |
-|  yht  | 69,5 |                                                                                                                              |
+| 3.3.  | 3    | Käyttäjä pystyy etusivulta aloittamaan session, start session modal lisäys, service apufunktiot sessionin aloitukselle       |
+|  yht  | 72,5 |                                                                                                                              |

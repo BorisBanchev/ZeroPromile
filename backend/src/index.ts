@@ -17,7 +17,7 @@ start().catch((err) => {
 });
 
 const server = app.listen(port, () => {
-  console.log(`Server running on port: ${port}`);
+  console.log(`Server running on port:${port}`);
 });
 
 // Handle unhandled promise rejections (database connection errors)

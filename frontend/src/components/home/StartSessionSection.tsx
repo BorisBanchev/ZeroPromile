@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { ActionButton } from "./ActionButton";
 
 interface StartSessionSectionProps {
@@ -15,6 +15,9 @@ export const StartSessionSection = ({
         title="Start Session"
         variant="primary"
       />
+      <Text className="text-center text-gray-400 text-sm mt-2 mb-5">
+        Begin tracking your drinks for the night
+      </Text>
     </View>
   );
 };
