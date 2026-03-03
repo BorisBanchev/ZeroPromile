@@ -51,13 +51,11 @@ afterAll(async () => {
   await prisma.user.deleteMany({ where: { email: TEST_USER.email } });
   await disconnectDB();
 });
-describe("POST /api/sessions", () => {
-  it("creates session and first drink when authenticated", async () => {
-    if (!accessToken) throw new Error("Missing access token");
 
+describe("POST /api/sessions", () => {
+  it("creates session when authenticated", async () => {
     const body = {
-      sessionName: "Evening Session",
-      drink: { name: "Beer", volumeMl: 330, abv: 5 },
+      sessionName: "Friday Night Out",
     };
 
     const res = await request(app)
@@ -67,36 +65,31 @@ describe("POST /api/sessions", () => {
       .expect(201);
 
     expect(res.body.status).toBe("success");
-    expect(res.body.message).toBe("Session started");
+    expect(res.body.message).toBe("Session started successfully");
+    expect(res.body.data).toHaveProperty("sessionId");
+    expect(res.body.data.sessionName).toBe("Friday Night Out");
+    expect(res.body.data.active).toBe(true);
 
     const dbUser = await prisma.user.findUnique({
-      where: { email: TEST_USER.email },
+      where: { id: userId },
+      include: {
+        sessions: {
+          include: {
+            drinks: true,
+          },
+        },
+      },
     });
 
-    expect(dbUser).not.toBeNull();
-    if (!dbUser) throw new Error("User missing in DB");
-
-    const dbSession = await prisma.session.findFirst({
-      where: { userId: dbUser.id },
-      include: { drinks: true },
-    });
-    expect(dbSession).not.toBeNull();
-    if (!dbSession) throw new Error("Session missing in DB");
-
-    expect(dbSession!.name).toBe(body.sessionName);
-    expect(dbSession!.drinks.length).toBe(1);
-
-    const createdDrink = dbSession!.drinks[0];
-    expect(createdDrink.name).toBe(body.drink.name);
-    expect(createdDrink.volumeMl).toBe(body.drink.volumeMl);
-    expect(createdDrink.abv).toBe(body.drink.abv);
-    expect(typeof createdDrink.bacContribution).toBe("number");
+    expect(dbUser?.sessions).toHaveLength(1);
+    expect(dbUser?.sessions[0].name).toBe("Friday Night Out");
+    expect(dbUser?.sessions[0].active).toBe(true);
+    expect(dbUser?.sessions[0].drinks).toHaveLength(0);
   });
 
   it("returns 401 with error when not authenticated", async () => {
     const body = {
       sessionName: "NoAuth Session",
-      drink: { name: "Rum", volumeMl: 50, abv: 40 },
     };
 
     const res = await request(app).post("/api/sessions").send(body).expect(401);
@@ -111,7 +104,6 @@ describe("POST /api/sessions", () => {
 
     const first = {
       sessionName: "First Session",
-      drink: { name: "Wine", volumeMl: 150, abv: 12 },
     };
 
     await request(app)
@@ -122,7 +114,6 @@ describe("POST /api/sessions", () => {
 
     const second = {
       sessionName: "Second Session",
-      drink: { name: "Shot", volumeMl: 40, abv: 40 },
     };
 
     const res = await request(app)
@@ -137,18 +128,16 @@ describe("POST /api/sessions", () => {
     );
   });
 
-  it("returns 400 when drink object is missing from request body", async () => {
-    if (!accessToken) throw new Error("Missing access token");
-
-    const body = {
-      sessionName: "Invalid Session",
-    };
+  it("returns 400 when sessionName is missing from request body", async () => {
+    const body = {};
 
     const res = await request(app)
       .post("/api/sessions")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
+
+    expect(res.body).toHaveProperty("error");
   });
 });
 
@@ -156,13 +145,20 @@ describe("POST /api/sessions/drinks", () => {
   it("adds second drink to active session and updates BAC calculation", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
+    // Start a session first
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Party Session" })
+      .expect(201);
+
+    // Add first drink
     const firstDrink = {
-      sessionName: "Party Session",
       drink: { name: "Beer", volumeMl: 330, abv: 5 },
     };
-    // start a session
+
     const sessionRes = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(firstDrink)
       .expect(201);
@@ -171,6 +167,7 @@ describe("POST /api/sessions/drinks", () => {
     expect(firstSoberTime).toHaveProperty("hours");
     expect(firstSoberTime).toHaveProperty("minutes");
 
+    // Add second drink
     const secondDrink = {
       drink: { name: "Wine", volumeMl: 150, abv: 12 },
     };
@@ -252,21 +249,34 @@ describe("Edge cases for BAC calculation", () => {
 
     const femaleToken = femaleReg.body.data.accessToken;
 
-    const body = {
-      sessionName: "Female User Session",
+    // Create sessions first
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${femaleToken}`)
+      .send({ sessionName: "Female User Session" })
+      .expect(201);
+
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Male User Session" })
+      .expect(201);
+
+    // Add same drink to both sessions
+    const drinkBody = {
       drink: { name: "Wine", volumeMl: 150, abv: 12 },
     };
 
     const femaleRes = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${femaleToken}`)
-      .send(body)
+      .send(drinkBody)
       .expect(201);
 
     const maleRes = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send(body)
+      .send(drinkBody)
       .expect(201);
 
     const femaleSoberMinutes =
@@ -282,27 +292,32 @@ describe("Edge cases for BAC calculation", () => {
   it("accumulates BAC correctly with multiple drinks", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
-    const body = {
-      sessionName: "Multi Drink Session",
-      drink: { name: "Beer 1", volumeMl: 330, abv: 5 },
-    };
-
-    const firstRes = await request(app)
+    // Create session
+    await request(app)
       .post("/api/sessions")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send(body)
+      .send({ sessionName: "Multi Drink Session" })
+      .expect(201);
+
+    // Add first drink
+    const firstRes = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ drink: { name: "Beer 1", volumeMl: 330, abv: 5 } })
       .expect(201);
 
     const firstTime =
       firstRes.body.data.timeUntilSobriety.hours * 60 +
       firstRes.body.data.timeUntilSobriety.minutes;
 
+    // Add second drink
     await request(app)
       .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
       .send({ drink: { name: "Beer 2", volumeMl: 330, abv: 5 } })
       .expect(201);
 
+    // Add third drink
     const thirdRes = await request(app)
       .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
@@ -333,13 +348,20 @@ describe("Edge cases for BAC calculation", () => {
   it("rejects drinks with invalid ABV (over 100%)", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
+    // Create session first
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Invalid ABV Session" })
+      .expect(201);
+
+    // Try to add drink with invalid ABV
     const body = {
-      sessionName: "Invalid ABV Session",
       drink: { name: "Impossible Drink", volumeMl: 50, abv: 150 },
     };
 
     const res = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
@@ -352,18 +374,24 @@ describe("Edge cases for BAC calculation", () => {
   it("rejects drinks with negative volume", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
+    // Create session first
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Invalid Volume Session" })
+      .expect(201);
+
+    // Try to add drink with negative volume
     const body = {
-      sessionName: "Invalid Volume Session",
       drink: { name: "No Volume", volumeMl: -50, abv: 5 },
     };
 
     const res = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
 
-    expect(res.body).toHaveProperty("error");
     expect(res.body).toHaveProperty("error");
     expect(typeof res.body.error).toBe("string");
     expect(res.body.error).toMatch(
@@ -374,13 +402,20 @@ describe("Edge cases for BAC calculation", () => {
   it("rejects drinks with zero ABV", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
+    // Create session first
+    await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Zero ABV Session" })
+      .expect(201);
+
+    // Try to add drink with zero ABV
     const body = {
-      sessionName: "Zero ABV Session",
       drink: { name: "Water", volumeMl: 330, abv: 0 },
     };
 
     const res = await request(app)
-      .post("/api/sessions")
+      .post("/api/sessions/drinks")
       .set("Authorization", `Bearer ${accessToken}`)
       .send(body)
       .expect(400);
@@ -389,18 +424,22 @@ describe("Edge cases for BAC calculation", () => {
     expect(typeof res.body.error).toBe("string");
     expect(res.body.error).toMatch("Drink abv must be greater than 0");
   });
+
   it("calculates BAC as 0 after sufficient time has elapsed for metabolism", async () => {
     if (!accessToken) throw new Error("Missing access token");
 
-    const body = {
-      sessionName: "Metabolized Session",
-      drink: { name: "Small Beer", volumeMl: 250, abv: 4 },
-    };
-
-    const res = await request(app)
+    // Create session first
+    await request(app)
       .post("/api/sessions")
       .set("Authorization", `Bearer ${accessToken}`)
-      .send(body)
+      .send({ sessionName: "Metabolized Session" })
+      .expect(201);
+
+    // Add drink
+    const res = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ drink: { name: "Small Beer", volumeMl: 250, abv: 4 } })
       .expect(201);
 
     const soberTime = res.body.data.timeUntilSobriety;
