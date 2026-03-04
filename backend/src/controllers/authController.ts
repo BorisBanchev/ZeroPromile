@@ -93,9 +93,15 @@ const login = async (
       error: "Invalid email or password",
     });
   }
-
-  const accessToken = generateToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
+  let accessToken = "";
+  let refreshToken = "";
+  try {
+    accessToken = generateToken(user.id);
+    refreshToken = generateRefreshToken(user.id);
+  } catch (error: unknown) {
+    if (error instanceof Error)
+      return res.status(500).json({ error: "Internal server error" });
+  }
 
   return res.status(201).json({
     status: "success",

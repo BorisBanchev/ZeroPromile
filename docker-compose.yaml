@@ -25,6 +25,8 @@ services:
       DEV_DATABASE_URL: postgresql://zeropromile:devpassword@db:5432/zeropromile
       JWT_TOKEN_SECRET_STAGING: "local_dev_staging_secret"
       JWT_REFRESH_TOKEN_SECRET_STAGING: "local_dev_staging_refresh_secret"
+      JWT_EXPIRES_IN: 15m
+      REFRESH_TOKEN_EXPIRES_IN: 7d
     ports:
       - "3001:3001"
     volumes:
