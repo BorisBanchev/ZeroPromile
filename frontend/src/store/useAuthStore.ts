@@ -15,9 +15,10 @@ interface AuthState {
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
+  refreshAccessToken: () => Promise<string | null>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -107,6 +108,35 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error instanceof Error) console.log(error.message);
     } finally {
       set({ isInitialized: true });
+    }
+  },
+  refreshAccessToken: async (): Promise<string | null> => {
+    try {
+      const refreshToken = get().refreshToken;
+      if (!refreshToken) {
+        await get().logout();
+        return null;
+      }
+
+      const response = await fetch(`${API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        await get().logout();
+        return null;
+      }
+      const newAccessToken: string = data.data.accessToken;
+      await SecureStore.setItemAsync("accessToken", newAccessToken);
+      set({ accessToken: newAccessToken });
+      return newAccessToken;
+    } catch {
+      await get().logout();
+      return null;
     }
   },
 }));
