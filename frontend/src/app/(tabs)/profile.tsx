@@ -11,7 +11,6 @@ import { useAuthStore } from "@/src/store/useAuthStore";
 
 export default function ProfileScreen() {
   const user = useAuthStore((state) => state.user);
-  console.log(user);
   const [showEditProfileView, setShowEditProfileView] = useState(false);
 
   const handleEditProfile = () => {
