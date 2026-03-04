@@ -135,7 +135,10 @@ export const addDrinkToSession = async (
           name: drink.name,
           volumeMl: drink.volumeMl,
           abv: drink.abv,
+          consumedAt: new Date().toISOString(),
+          bacContribution,
         },
+        currentBAC: totalPromilles,
         timeUntilSobriety: {
           hours: sober.untilSober.hours,
           minutes: sober.untilSober.minutes,
@@ -246,6 +249,51 @@ export const getSessionTimeline = async (
     return res
       .status(500)
       .json({ error: "Failed to retrieve session timeline" });
+  }
+};
+
+export const getActiveSession = async (req: Request, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authorized" });
+  }
+
+  try {
+    const session = await prisma.session.findFirst({
+      where: { userId: req.user.id, active: true },
+      include: {
+        drinks: {
+          orderBy: { consumedAt: "asc" },
+          select: {
+            consumedAt: true,
+            bacContribution: true,
+          },
+        },
+        _count: {
+          select: { drinks: true },
+        },
+      },
+    });
+
+    if (!session) {
+      return res.status(404).json({ error: "No active session found" });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      message: "Active session retrieved",
+      data: {
+        sessionId: session.id,
+        sessionName: session.name,
+        totalDrinks: session._count.drinks,
+        drinks: session.drinks.map((d) => ({
+          consumedAt: d.consumedAt.toISOString(),
+          bacContribution: d.bacContribution ?? 0,
+        })),
+      },
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) console.error(err.message);
+    return res.status(500).json({ error: "Failed to retrieve active session" });
   }
 };
 

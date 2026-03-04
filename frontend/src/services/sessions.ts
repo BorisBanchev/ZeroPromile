@@ -1,5 +1,6 @@
 import { API_URL } from "../config/apiUrl";
 import { useAuthStore } from "../store/useAuthStore";
+import { DrinkSnapshot } from "../utils/calculateBAC";
 
 export interface ActiveSession {
   sessionId: string;
@@ -10,6 +11,7 @@ export interface ActiveSession {
     minutes: number;
   };
   totalDrinks: number;
+  drinks: DrinkSnapshot[];
 }
 
 export interface StartSessionRequest {
@@ -80,23 +82,19 @@ const getSessions = async (
 const getActiveSession = async (
   accessToken: string,
 ): Promise<ActiveSession | null> => {
-  const data = await getSessions(accessToken);
-  const activeSessionData = data.data.sessions.find((s) => s.active);
+  try {
+    const response = await fetch(`${API_URL}/sessions/active`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
 
-  if (!activeSessionData) {
+    if (response.status === 404) return null;
+
+    const json = await response.json();
+    return json.data as ActiveSession;
+  } catch (error) {
+    console.error(error);
     return null;
   }
-
-  return {
-    sessionId: activeSessionData.sessionId,
-    sessionName: activeSessionData.sessionName,
-    currentBAC: 0,
-    timeUntilSobriety: {
-      hours: 0,
-      minutes: 0,
-    },
-    totalDrinks: activeSessionData.totalDrinks,
-  };
 };
 
 const startSession = async (
