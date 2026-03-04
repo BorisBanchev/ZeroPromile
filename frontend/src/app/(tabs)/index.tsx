@@ -37,7 +37,6 @@ export default function HomeScreen() {
           const session = await sessionsService.getActiveSession(accessToken);
           setActiveSession(session);
         } catch (error) {
-          console.error("Error fetching active session:", error);
           setError(
             error instanceof Error ? error.message : "Failed to load session",
           );

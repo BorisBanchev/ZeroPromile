@@ -1,9 +1,10 @@
 import { API_URL } from "../config/apiUrl";
+import { useAuthStore } from "../store/useAuthStore";
 
 export interface ActiveSession {
   sessionId: string;
   sessionName: string;
-  currectBAC: number;
+  currentBAC: number;
   timeUntilSobriety: {
     hours: number;
     minutes: number;
@@ -63,6 +64,12 @@ const getSessions = async (
 
   const data = await response.json();
 
+  if (response.status === 401) {
+    const newToken = await useAuthStore.getState().refreshAccessToken();
+    if (!newToken) throw new Error("Session expired. Please log in again.");
+    return getSessions(newToken);
+  }
+
   if (!response.ok) {
     throw new Error(data.error || "Failed to fetch sessions");
   }
@@ -107,6 +114,12 @@ const startSession = async (
 
   const data = await response.json();
 
+  if (response.status === 401) {
+    const newToken = await useAuthStore.getState().refreshAccessToken();
+    if (!newToken) throw new Error("Session expired. Please log in again.");
+    return startSession(newToken, sessionName);
+  }
+
   if (!response.ok) {
     throw new Error(data.error || "Failed to start session");
   }
@@ -122,6 +135,12 @@ const endSession = async (accessToken: string): Promise<EndSessionResponse> => {
   });
 
   const data = await response.json();
+
+  if (response.status === 401) {
+    const newToken = await useAuthStore.getState().refreshAccessToken();
+    if (!newToken) throw new Error("Session expired. Please log in again.");
+    return endSession(newToken);
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Failed to end session");
