@@ -8,6 +8,7 @@ import { ActiveSessionSection } from "@/src/components/home/ActiveSessionSection
 import { StartSessionSection } from "@/src/components/home/StartSessionSection";
 import { HistoryLink } from "@/src/components/home/HistoryLink";
 import { Disclaimer } from "@/src/components/home/Disclaimer";
+import { Notification } from "@/src/components/ui/Notification";
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { useNotificationStore } from "@/src/store/useNotificationStore";
 import { useRouter } from "expo-router";
@@ -76,7 +77,7 @@ export default function HomeScreen() {
   };
 
   const handleAddDrink = () => {
-    console.log("Add drink pressed");
+    router.push("/modals/add-drink");
   };
 
   const handleEndSession = async () => {
@@ -109,6 +110,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top"]}>
+      <Notification />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 20 }}

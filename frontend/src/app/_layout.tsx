@@ -34,12 +34,14 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen
             name="modals/add-drink"
-            options={{ presentation: "modal" }}
+            options={{
+              presentation: "transparentModal",
+              animation: "fade",
+              headerShown: false,
+              contentStyle: { backgroundColor: "transparent" },
+            }}
           />
-          <Stack.Screen
-            name="modals/custom-drink"
-            options={{ presentation: "modal" }}
-          />
+
           <Stack.Screen
             name="modals/start-session"
             options={{
