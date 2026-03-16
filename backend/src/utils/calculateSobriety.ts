@@ -16,17 +16,28 @@ export const drinkToBAC = (
 
 // returns current total promilles since session started
 export const currentBAC = (drinks: Drink[], tNowMs: number): number => {
-  let currentBac = 0;
+  const HOURS_MS = 1000 * 60 * 60;
+  if (!drinks.length) return 0;
 
-  for (const d of drinks) {
-    const elapsedHours: number = Math.max(
-      0,
-      (tNowMs - d.time) / (1000 * 60 * 60),
-    );
-    const remainingBAC: number = Math.max(0, d.bac - BETA * elapsedHours);
-    currentBac += remainingBAC;
+  const events = drinks
+    .map((d) => ({
+      time: new Date(d.time).getTime(),
+      bac: Math.max(0, d.bac),
+    }))
+    .sort((a, b) => a.time - b.time);
+  if (!events.length) return 0;
+  let bac = 0;
+  let lastTime = events[0].time;
+
+  for (const e of events) {
+    const elapsedHours = Math.max(0, (e.time - lastTime) / HOURS_MS);
+    bac = Math.max(0, bac - BETA * elapsedHours);
+    bac += e.bac;
+    lastTime = e.time;
   }
-  return Math.max(0, currentBac);
+
+  const elapsedToNowHours = Math.max(0, (tNowMs - lastTime) / HOURS_MS);
+  return Math.max(0, bac - BETA * elapsedToNowHours);
 };
 
 // returns time until complete sobriety in hours and minutes
