@@ -87,6 +87,12 @@ const getActiveSession = async (
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
+    if (response.status === 401) {
+      const newToken = await useAuthStore.getState().refreshAccessToken();
+      if (!newToken) throw new Error("Session expired. Please log in again.");
+      return getActiveSession(newToken);
+    }
+
     if (response.status === 404) return null;
 
     const json = await response.json();

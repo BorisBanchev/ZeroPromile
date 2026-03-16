@@ -30,4 +30,6 @@
 | 1.3.  | 3    | Etusivun alustava näkymä                                                                                                                                                                                    |
 | 3.3.  | 3    | Käyttäjä pystyy etusivulta aloittamaan session, start session modal lisäys, service apufunktiot sessionin aloitukselle                                                                                      |
 | 4.3.  | 4,5  | Korjaa bugi käynnistysohjeissa liittyen env muuttujiin, korjaa bugi accessTokenin kanssa frontendissa, jossa uutta tokenia ei tallennettu, juoman lisäys päivittää ajastinta ja promilleja Postmanin kautta |
-|  yht  | 77   |                                                                                                                                                                                                             |
+| 6.3.  | 3    | Lisää rate limiting backendiin, Käyttäjä voi lisätä quick modalin kautta juoman (olut, viini, shotti, cocktail)                                                                                             |
+| 16.3. | 2    | Korjaa bugi juomien lisäämisessä, jossa juomien lisäys aiheutti ajastimen nopeutumista                                                                                                                      |
+|  yht  | 82   |                                                                                                                                                                                                             |
