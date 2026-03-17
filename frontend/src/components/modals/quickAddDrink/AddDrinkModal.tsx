@@ -13,41 +13,49 @@ import { AddDrinkHeader } from "./AddDrinkHeader";
 import { QuickSelectGrid, QuickDrink } from "./QuickSelectGrid";
 import { CustomDrinkButton } from "./CustomDrinkButton";
 import { AddDrinkButton } from "./AddDrinkButton";
+import {
+  CustomDrinkForm,
+  CustomDrinkPayload,
+} from "./customDrink/CustomDrinkForm";
 
 interface AddDrinkModalProps {
   visible: boolean;
   onCancel: () => void;
   onSuccess: () => void;
-  onCustomDrink: () => void;
 }
 
 export const AddDrinkModal = ({
   visible,
   onCancel,
   onSuccess,
-  onCustomDrink,
 }: AddDrinkModalProps) => {
   const accessToken = useAuthStore((state) => state.accessToken);
   const setError = useNotificationStore((state) => state.setError);
   const setSuccess = useNotificationStore((state) => state.setSuccess);
 
   const [selectedDrink, setSelectedDrink] = useState<QuickDrink | null>(null);
+  const [showCustom, setShowCustom] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleAdd = async () => {
-    if (!selectedDrink || !accessToken) return;
+  const submitDrink = async (payload: CustomDrinkPayload) => {
+    if (!accessToken) {
+      setError("Not authenticated");
+      return;
+    }
 
     setIsLoading(true);
     try {
       await drinksService.addDrink(accessToken, {
         drink: {
-          name: selectedDrink.name,
-          volumeMl: selectedDrink.volumeMl,
-          abv: selectedDrink.abv,
+          name: payload.name,
+          volumeMl: payload.volumeMl,
+          abv: payload.abv,
         },
       });
+
       setSuccess("Drink added!");
       setSelectedDrink(null);
+      setShowCustom(false);
       onSuccess();
     } catch (error) {
       setError(error instanceof Error ? error.message : "Failed to add drink");
@@ -56,8 +64,19 @@ export const AddDrinkModal = ({
     }
   };
 
+  const handleQuickAdd = async () => {
+    if (!selectedDrink) return;
+
+    await submitDrink({
+      name: selectedDrink.name,
+      volumeMl: selectedDrink.volumeMl,
+      abv: selectedDrink.abv,
+    });
+  };
+
   const handleClose = () => {
     setSelectedDrink(null);
+    setShowCustom(false);
     onCancel();
   };
 
@@ -82,16 +101,26 @@ export const AddDrinkModal = ({
           >
             <AddDrinkHeader onClose={handleClose} />
             <View className="px-6 py-6">
-              <QuickSelectGrid
-                selectedDrink={selectedDrink}
-                onSelect={setSelectedDrink}
-              />
-              <CustomDrinkButton onPress={onCustomDrink} />
-              <AddDrinkButton
-                onPress={handleAdd}
-                isLoading={isLoading}
-                disabled={!selectedDrink}
-              />
+              {showCustom ? (
+                <CustomDrinkForm
+                  isLoading={isLoading}
+                  onBack={() => setShowCustom(false)}
+                  onSubmit={submitDrink}
+                />
+              ) : (
+                <>
+                  <QuickSelectGrid
+                    selectedDrink={selectedDrink}
+                    onSelect={setSelectedDrink}
+                  />
+                  <CustomDrinkButton onPress={() => setShowCustom(true)} />
+                  <AddDrinkButton
+                    onPress={handleQuickAdd}
+                    isLoading={isLoading}
+                    disabled={!selectedDrink}
+                  />
+                </>
+              )}
             </View>
           </Pressable>
         </Pressable>

@@ -32,4 +32,5 @@
 | 4.3.  | 4,5  | Korjaa bugi käynnistysohjeissa liittyen env muuttujiin, korjaa bugi accessTokenin kanssa frontendissa, jossa uutta tokenia ei tallennettu, juoman lisäys päivittää ajastinta ja promilleja Postmanin kautta |
 | 6.3.  | 3    | Lisää rate limiting backendiin, Käyttäjä voi lisätä quick modalin kautta juoman (olut, viini, shotti, cocktail)                                                                                             |
 | 16.3. | 2    | Korjaa bugi juomien lisäämisessä, jossa juomien lisäys aiheutti ajastimen nopeutumista                                                                                                                      |
-|  yht  | 82   |                                                                                                                                                                                                             |
+| 17.3. | 3,5  | Käyttäjä voi lisätä custom juoman sessioniin                                                                                                                                                                |
+|  yht  | 85,5 |                                                                                                                                                                                                             |

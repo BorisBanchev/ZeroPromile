@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { ProfileHeader } from "./ProfileHeader";
 import updateUserProfileService from "../../services/updateProfile";
+import { parseNumber } from "@/src/utils/parseNumber";
 
 interface EditProfileViewProps {
   user: User;
@@ -31,7 +32,11 @@ export const EditProfileView = ({ user, onClose }: EditProfileViewProps) => {
   };
 
   const handleSave = async () => {
-    const weight = parseFloat(weightKg);
+    const weight = parseNumber(weightKg, true);
+    if (weight === null || weight < 0.1) {
+      setError("Weight must be a number greater than 0.1");
+      return;
+    }
 
     if (!accessToken) {
       setError("Not authenticated");
