@@ -31,6 +31,7 @@ export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const [bacLevel, setBacLevel] = useState(0);
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [isEndingSession, setIsEndingSession] = useState(false);
 
   useEffect(() => {
     if (!activeSession?.drinks?.length) {
@@ -38,15 +39,33 @@ export default function HomeScreen() {
       setTime({ hours: 0, minutes: 0, seconds: 0 });
       return;
     }
-    const tick = () => {
+    const tick = async () => {
       const bac = calculateCurrentBAC(activeSession.drinks);
       setBacLevel(bac);
       setTime(calculateTimeUntilSober(bac));
+
+      if (bac <= 0 && accessToken && !isEndingSession) {
+        setIsEndingSession(true);
+        try {
+          await sessionsService.endSession(accessToken);
+          setActiveSession(null);
+          setBacLevel(0);
+          setTime({ hours: 0, minutes: 0, seconds: 0 });
+        } catch (error) {
+          setError(
+            error instanceof Error
+              ? error.message
+              : "Failed to end the session",
+          );
+        } finally {
+          setIsEndingSession(false);
+        }
+      }
     };
-    tick();
+    void tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [activeSession?.drinks]);
+  }, [activeSession?.drinks, accessToken, isEndingSession, setError]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -81,16 +100,21 @@ export default function HomeScreen() {
   };
 
   const handleEndSession = async () => {
-    if (!accessToken) return;
+    if (!accessToken || !activeSession || isEndingSession) return;
 
+    setIsEndingSession(true);
     try {
       await sessionsService.endSession(accessToken);
       setActiveSession(null);
+      setBacLevel(0);
+      setTime({ hours: 0, minutes: 0, seconds: 0 });
       setSuccess("Session ended successfully");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "Failed to end session",
       );
+    } finally {
+      setIsEndingSession(false);
     }
   };
 

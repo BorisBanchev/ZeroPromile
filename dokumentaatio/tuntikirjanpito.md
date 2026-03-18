@@ -33,4 +33,5 @@
 | 6.3.  | 3    | Lisää rate limiting backendiin, Käyttäjä voi lisätä quick modalin kautta juoman (olut, viini, shotti, cocktail)                                                                                             |
 | 16.3. | 2    | Korjaa bugi juomien lisäämisessä, jossa juomien lisäys aiheutti ajastimen nopeutumista                                                                                                                      |
 | 17.3. | 3,5  | Käyttäjä voi lisätä custom juoman sessioniin                                                                                                                                                                |
-|  yht  | 85,5 |                                                                                                                                                                                                             |
+| 18.3. | 2    | Korjaa bugi UI:ssa, jossa bac < 0.01 näytettiin 0.0 muodossa, Sessio nyt päättyy automaattisesti, kun käyttäjän bac taso on 0.00                                                                            |
+|  yht  | 87,5 |                                                                                                                                                                                                             |

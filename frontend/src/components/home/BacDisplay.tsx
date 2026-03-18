@@ -6,6 +6,8 @@ interface BacDisplayProps {
 
 export const BacDisplay = ({ bacLevel }: BacDisplayProps) => {
   const isDangerous = bacLevel > 0.0;
+  const displayedBac = bacLevel > 0 && bacLevel < 0.01 ? 0.01 : bacLevel;
+
   return (
     <View className="items-center my-7">
       <View
@@ -13,7 +15,7 @@ export const BacDisplay = ({ bacLevel }: BacDisplayProps) => {
           isDangerous ? "border-red-500" : "border-[#2b313f]"
         }`}
       >
-        <Text className="text-white text-6xl">{bacLevel.toFixed(2)}</Text>
+        <Text className="text-white text-6xl">{displayedBac.toFixed(2)}</Text>
         <Text className="text-gray-400 text-base mt-1">‰ BAC</Text>
         <View
           className={`mt-3 px-4 py-1.5 rounded-xl ${
