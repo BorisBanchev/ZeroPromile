@@ -13,11 +13,12 @@ import { useAuthStore } from "@/src/store/useAuthStore";
 import { useNotificationStore } from "@/src/store/useNotificationStore";
 import { useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-import sessionsService, { ActiveSession } from "@/src/services/sessions";
+import sessionsService from "@/src/services/sessions";
 import {
   calculateCurrentBAC,
   calculateTimeUntilSober,
 } from "@/src/utils/calculateBAC";
+import { ActiveSession } from "@/src/types/sessions";
 
 export default function HomeScreen() {
   const router = useRouter();

@@ -1,33 +1,7 @@
 import { API_URL } from "../config/apiUrl";
 import { useAuthStore } from "../store/useAuthStore";
-
-export interface AddDrinkRequest {
-  drink: {
-    name: string;
-    volumeMl: number;
-    abv: number;
-  };
-}
-
-export interface AddDrinkResponse {
-  status: string;
-  message: string;
-  data: {
-    sessionId: string;
-    drink: {
-      name: string;
-      volumeMl: number;
-      abv: number;
-      consumedAt: string;
-      bacContribution: number;
-    };
-    currentBAC: number;
-    timeUntilSobriety: {
-      hours: number;
-      minutes: number;
-    };
-  };
-}
+import { AddDrinkRequest, AddDrinkResponse } from "../types/drinks";
+import { ErrorResponse } from "../types/error";
 
 const addDrink = async (
   accessToken: string,
@@ -42,16 +16,19 @@ const addDrink = async (
     body: JSON.stringify(data),
   });
 
-  const responseData = await response.json();
+  const responseData: AddDrinkResponse | ErrorResponse = await response.json();
 
   if (response.status === 401) {
     const newToken = await useAuthStore.getState().refreshAccessToken();
-    if (!newToken) throw new Error("Session expired. Please log in again.");
     return addDrink(newToken, data);
   }
 
-  if (!response.ok) {
+  if ("error" in responseData) {
     throw new Error(responseData.error || "Failed to add drink to session");
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to add drink to session");
   }
 
   return responseData;
