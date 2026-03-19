@@ -1,59 +1,13 @@
 import { API_URL } from "../config/apiUrl";
 import { useAuthStore } from "../store/useAuthStore";
-import { DrinkSnapshot } from "../utils/calculateBAC";
-
-export interface ActiveSession {
-  sessionId: string;
-  sessionName: string;
-  currentBAC: number;
-  timeUntilSobriety: {
-    hours: number;
-    minutes: number;
-  };
-  totalDrinks: number;
-  drinks: DrinkSnapshot[];
-}
-
-export interface StartSessionRequest {
-  sessionName: string;
-}
-
-export interface StartSessionResponse {
-  status: string;
-  message: string;
-  data: {
-    sessionId: string;
-    sessionName: string;
-    active: boolean;
-  };
-}
-
-export interface SessionSummary {
-  sessionId: string;
-  sessionName: string;
-  startedAt: string;
-  endedAt: string | null;
-  active: boolean;
-  totalDrinks: number;
-}
-
-export interface GetSessionsResponse {
-  status: string;
-  message: string;
-  data: {
-    sessions: SessionSummary[];
-  };
-}
-
-export interface EndSessionResponse {
-  status: string;
-  message: string;
-  data: {
-    sessionId: string;
-    sessionName: string;
-    active: boolean;
-  };
-}
+import { ErrorResponse } from "../types/error";
+import {
+  GetSessionsResponse,
+  ActiveSession,
+  EndSessionResponse,
+  StartSessionResponse,
+  GetActiveSessionResponse,
+} from "../types/sessions";
 
 const getSessions = async (
   accessToken: string,
@@ -64,16 +18,19 @@ const getSessions = async (
     },
   });
 
-  const data = await response.json();
+  const data: GetSessionsResponse | ErrorResponse = await response.json();
 
   if (response.status === 401) {
     const newToken = await useAuthStore.getState().refreshAccessToken();
-    if (!newToken) throw new Error("Session expired. Please log in again.");
     return getSessions(newToken);
   }
 
-  if (!response.ok) {
+  if ("error" in data) {
     throw new Error(data.error || "Failed to fetch sessions");
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch sessions");
   }
 
   return data;
@@ -82,25 +39,26 @@ const getSessions = async (
 const getActiveSession = async (
   accessToken: string,
 ): Promise<ActiveSession | null> => {
-  try {
-    const response = await fetch(`${API_URL}/sessions/active`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+  const response = await fetch(`${API_URL}/sessions/active`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
 
-    if (response.status === 401) {
-      const newToken = await useAuthStore.getState().refreshAccessToken();
-      if (!newToken) throw new Error("Session expired. Please log in again.");
-      return getActiveSession(newToken);
-    }
-
-    if (response.status === 404) return null;
-
-    const json = await response.json();
-    return json.data as ActiveSession;
-  } catch (error) {
-    console.error(error);
-    return null;
+  if (response.status === 401) {
+    const newToken = await useAuthStore.getState().refreshAccessToken();
+    return getActiveSession(newToken);
   }
+
+  if (response.status === 404) return null;
+
+  const body: GetActiveSessionResponse | ErrorResponse = await response.json();
+  if ("error" in body) {
+    throw new Error(body.error || "Failed to load active session");
+  }
+  if (!response.ok) {
+    throw new Error("Failed to load active session");
+  }
+
+  return body.data;
 };
 
 const startSession = async (
@@ -116,17 +74,20 @@ const startSession = async (
     body: JSON.stringify({ sessionName }),
   });
 
-  const data = await response.json();
+  const data: StartSessionResponse | ErrorResponse = await response.json();
 
   if (response.status === 401) {
     const newToken = await useAuthStore.getState().refreshAccessToken();
-    if (!newToken) throw new Error("Session expired. Please log in again.");
     return startSession(newToken, sessionName);
   }
 
-  if (!response.ok) {
+  if ("error" in data) {
     throw new Error(data.error || "Failed to start session");
   }
+  if (!response.ok) {
+    throw new Error("Failed to start session");
+  }
+
   return data;
 };
 
@@ -138,16 +99,18 @@ const endSession = async (accessToken: string): Promise<EndSessionResponse> => {
     },
   });
 
-  const data = await response.json();
+  const data: EndSessionResponse | ErrorResponse = await response.json();
 
   if (response.status === 401) {
     const newToken = await useAuthStore.getState().refreshAccessToken();
-    if (!newToken) throw new Error("Session expired. Please log in again.");
     return endSession(newToken);
   }
 
-  if (!response.ok) {
+  if ("error" in data) {
     throw new Error(data.error || "Failed to end session");
+  }
+  if (!response.ok) {
+    throw new Error("Failed to end session");
   }
 
   return data;

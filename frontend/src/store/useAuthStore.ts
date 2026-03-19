@@ -1,8 +1,16 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
-import { User, LoginCredentials, RegisterCredentials } from "../types/auth";
+import {
+  User,
+  LoginCredentials,
+  RegisterCredentials,
+  LoginResponse,
+  RegisterResponse,
+  RefreshTokenResponse,
+} from "../types/auth";
 import { useNotificationStore } from "./useNotificationStore";
 import { API_URL } from "../config/apiUrl";
+import { ErrorResponse } from "../types/error";
 
 interface AuthState {
   user: User | null;
@@ -15,7 +23,7 @@ interface AuthState {
   register: (credentials: RegisterCredentials) => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
-  refreshAccessToken: () => Promise<string | null>;
+  refreshAccessToken: () => Promise<string>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -34,10 +42,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
+      const data: LoginResponse | ErrorResponse = await response.json();
 
-      if (!response.ok) {
+      if ("error" in data) {
         throw new Error(data.error || "Login Failed");
+      }
+      if (!response.ok) {
+        throw new Error("Login failed");
       }
 
       const { user, accessToken, refreshToken } = data.data;
@@ -65,10 +76,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         body: JSON.stringify(credentials),
       });
 
-      const data = await response.json();
+      const data: RegisterResponse | ErrorResponse = await response.json();
+
+      if ("error" in data) {
+        throw new Error(data.error || "Registration Failed");
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
+        throw new Error("Registration failed");
       }
 
       const { user, accessToken, refreshToken } = data.data;
@@ -80,7 +95,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error ? error.message : "Registration failed";
-      console.log(errorMessage);
       useNotificationStore.getState().setError(errorMessage);
       return;
     } finally {
@@ -105,17 +119,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ accessToken, refreshToken });
       }
     } catch (error: unknown) {
-      if (error instanceof Error) console.log(error.message);
+      if (error instanceof Error) console.error(error);
     } finally {
       set({ isInitialized: true });
     }
   },
-  refreshAccessToken: async (): Promise<string | null> => {
+  refreshAccessToken: async (): Promise<string> => {
     try {
       const refreshToken = get().refreshToken;
       if (!refreshToken) {
-        await get().logout();
-        return null;
+        throw new Error("No refresh token");
       }
 
       const response = await fetch(`${API_URL}/auth/refresh-token`, {
@@ -124,19 +137,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         body: JSON.stringify({ refreshToken }),
       });
 
-      const data = await response.json();
+      const data: RefreshTokenResponse | ErrorResponse = await response.json();
+
+      if ("error" in data) {
+        throw new Error(data.error || "Failed to refresh access token");
+      }
 
       if (!response.ok) {
-        await get().logout();
-        return null;
+        throw new Error("Failed to refresh access token");
       }
+
       const newAccessToken: string = data.data.accessToken;
       await SecureStore.setItemAsync("accessToken", newAccessToken);
       set({ accessToken: newAccessToken });
       return newAccessToken;
-    } catch {
+    } catch (error: unknown) {
       await get().logout();
-      return null;
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Session expired, please log in again";
+
+      useNotificationStore.getState().setError(message);
+      throw new Error(message);
     }
   },
 }));

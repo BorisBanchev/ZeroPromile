@@ -18,7 +18,7 @@ export interface RegisterResponseBody {
       id: string;
       name: string;
       email: string;
-      gender: string;
+      gender: "male" | "female";
       weightKg: number;
     };
     accessToken: string;
@@ -37,7 +37,7 @@ export interface LoginResponseBody {
       id: string;
       email: string;
       name: string;
-      gender: string;
+      gender: "male" | "female";
       weightKg: number;
     };
     accessToken: string;
