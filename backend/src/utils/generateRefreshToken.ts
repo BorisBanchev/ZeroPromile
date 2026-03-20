@@ -1,5 +1,6 @@
 import * as jwt from "jsonwebtoken";
 import { JwtPayload } from "../types/token";
+import { AppError } from "../error/appError";
 
 export const generateRefreshToken = (userId: string): string => {
   const secret =
@@ -7,7 +8,7 @@ export const generateRefreshToken = (userId: string): string => {
       ? process.env.JWT_REFRESH_TOKEN_SECRET
       : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
 
-  if (!secret) throw new Error("REFRESH_TOKEN_SECRET is not defined");
+  if (!secret) throw new AppError("REFRESH_TOKEN_SECRET is not defined");
 
   const expiresIn = process.env
     .REFRESH_TOKEN_EXPIRES_IN as jwt.SignOptions["expiresIn"];
