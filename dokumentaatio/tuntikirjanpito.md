@@ -34,4 +34,6 @@
 | 16.3. | 2    | Korjaa bugi juomien lisäämisessä, jossa juomien lisäys aiheutti ajastimen nopeutumista                                                                                                                      |
 | 17.3. | 3,5  | Käyttäjä voi lisätä custom juoman sessioniin                                                                                                                                                                |
 | 18.3. | 2    | Korjaa bugi UI:ssa, jossa bac < 0.01 näytettiin 0.0 muodossa, Sessio nyt päättyy automaattisesti, kun käyttäjän bac taso on 0.00                                                                            |
-|  yht  | 87,5 |                                                                                                                                                                                                             |
+| 19.3. | 2    | Lisää parempi tyypitys frontendin service funktioihin ja paranna tyypitystä yleisesti                                                                                                                       |
+| 20.3. | 2    | Lisää backendiin global error middleware ja custom AppError class, nyt try/catch lohkot myös poistettu sillä express 5 catchaa virheet automaattisesti async funktioissa                                    |
+|  yht  | 91,5 |                                                                                                                                                                                                             |

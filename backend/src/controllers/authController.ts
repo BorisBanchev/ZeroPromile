@@ -13,6 +13,7 @@ import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
 import { generateRefreshToken } from "../utils/generateRefreshToken";
 import { Gender } from "../generated/prisma/enums";
+import { AppError } from "../error/appError";
 
 const register = async (
   req: Request<unknown, unknown, RegisterRequestBody>,
@@ -25,15 +26,11 @@ const register = async (
   });
 
   if (userExists) {
-    return res.status(400).json({
-      error: "User already exists with this email",
-    });
+    throw new AppError("User already exists with this email", 400);
   }
 
   if (password !== passwordConfirm) {
-    return res.status(400).json({
-      error: "Passwords don't match",
-    });
+    throw new AppError("Passwords don't match", 400);
   }
 
   const salt: string = await bcrypt.genSalt(10);
@@ -81,27 +78,17 @@ const login = async (
   });
 
   if (!user) {
-    return res.status(401).json({
-      error: "Invalid email or password",
-    });
+    throw new AppError("Invalid email or password", 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    return res.status(401).json({
-      error: "Invalid email or password",
-    });
+    throw new AppError("Invalid email or password", 401);
   }
-  let accessToken = "";
-  let refreshToken = "";
-  try {
-    accessToken = generateToken(user.id);
-    refreshToken = generateRefreshToken(user.id);
-  } catch (error: unknown) {
-    if (error instanceof Error)
-      return res.status(500).json({ error: "Internal server error" });
-  }
+
+  const accessToken = generateToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
 
   return res.status(201).json({
     status: "success",
@@ -126,41 +113,34 @@ const refreshTokenEndpoint = async (
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
-    return res.status(401).json({ error: "Refresh token required" });
+    throw new AppError("Refresh token required", 401);
   }
 
-  try {
-    const secret: string | undefined =
-      process.env.NODE_ENV === "production"
-        ? process.env.JWT_REFRESH_TOKEN_SECRET
-        : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
+  const secret: string | undefined =
+    process.env.NODE_ENV === "production"
+      ? process.env.JWT_REFRESH_TOKEN_SECRET
+      : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
 
-    if (!secret) throw new Error("REFRESH_TOKEN_SECRET not found");
+  if (!secret) throw new AppError("REFRESH_TOKEN_SECRET not found", 401);
 
-    const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
+  const decoded = jwt.verify(refreshToken, secret) as JwtPayload;
 
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-    });
+  const user = await prisma.user.findUnique({
+    where: { id: decoded.id },
+  });
 
-    if (!user) {
-      return res.status(401).json({ error: "User no longer exists" });
-    }
-
-    const accessToken = generateToken(decoded.id);
-
-    return res.json({
-      status: "success",
-      data: {
-        accessToken,
-      },
-    });
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(401).json({ error: "Invalid refresh token" });
-    }
-    return res.status(500).json({ error: "Internal server error" });
+  if (!user) {
+    throw new AppError("User no longer exists", 401);
   }
+
+  const accessToken = generateToken(decoded.id);
+
+  return res.json({
+    status: "success",
+    data: {
+      accessToken,
+    },
+  });
 };
 
 const logout = (_req: Request, res: Response): Response => {

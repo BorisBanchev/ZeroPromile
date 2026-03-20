@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { prisma } from "../config/db";
 import type { Request, Response, NextFunction } from "express";
 import type { JwtPayload } from "../types/token";
+import { AppError } from "../error/appError";
 import { User } from "../generated/prisma/client";
 declare module "express-serve-static-core" {
   interface Request {
@@ -11,7 +12,7 @@ declare module "express-serve-static-core" {
 
 export const authMiddleware = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): Promise<Response | void> => {
   let token: string | null = null;
@@ -26,30 +27,24 @@ export const authMiddleware = async (
   }
 
   if (!token) {
-    return res.status(401).json({ error: "Not authorized, no token provided" });
+    throw new AppError("Not authorized, no token provided", 401);
   }
 
-  try {
-    const secret: string | undefined =
-      process.env.NODE_ENV === "production"
-        ? process.env.JWT_TOKEN_SECRET
-        : process.env.JWT_TOKEN_SECRET_STAGING;
+  const secret: string | undefined =
+    process.env.NODE_ENV === "production"
+      ? process.env.JWT_TOKEN_SECRET
+      : process.env.JWT_TOKEN_SECRET_STAGING;
 
-    if (!secret) throw new Error("JWT secret not found");
-    const decoded = jwt.verify(token, secret) as JwtPayload;
-    const user = await prisma.user.findUnique({
-      where: { id: decoded.id },
-    });
+  if (!secret) throw new AppError("Internal server error", 500);
+  const decoded = jwt.verify(token, secret) as JwtPayload;
+  const user = await prisma.user.findUnique({
+    where: { id: decoded.id },
+  });
 
-    if (!user) {
-      return res.status(401).json({ error: "User no longer exists" });
-    }
-
-    req.user = user;
-    next();
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      return res.status(401).json({ error: "Not authorized, token failed" });
-    }
+  if (!user) {
+    throw new AppError("User no longer exists", 401);
   }
+
+  req.user = user;
+  next();
 };

@@ -1,15 +1,23 @@
 import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
+import { AppError } from "../error/appError";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export const errorMiddleware = (
   error: unknown,
   _req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ) => {
-  if (error instanceof z.ZodError) {
-    res.status(400).send({ error: error.issues[0].message });
+  if (error instanceof AppError) {
+    return res.status(error.statusCode).json({ error: error.message });
+  } else if (error instanceof z.ZodError) {
+    return res.status(400).json({ error: error.issues[0].message });
+  } else if (error instanceof Error) {
+    return res.status(500).json({ error: error.message });
+  } else if (error instanceof JsonWebTokenError) {
+    return res.status(401).json({ error: "Not authorized, token failed" });
   } else {
-    next(error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
