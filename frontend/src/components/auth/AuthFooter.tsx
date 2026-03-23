@@ -10,11 +10,11 @@ export const AuthFooter = ({ description, navigateText }: AuthFooterProps) => {
   const router = useRouter();
 
   const navigateToRegister = (): void => {
-    router.push("/register");
+    router.navigate("/register");
   };
 
   const navigateToLogin = (): void => {
-    router.push("/login");
+    router.navigate("/login");
   };
   const isLoginFooter = navigateText === "Sign Up";
 

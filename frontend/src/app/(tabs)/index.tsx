@@ -93,11 +93,11 @@ export default function HomeScreen() {
   );
 
   const handleStartSession = () => {
-    router.push("/modals/start-session");
+    router.navigate("/modals/start-session");
   };
 
   const handleAddDrink = () => {
-    router.push("/modals/add-drink");
+    router.navigate("/modals/add-drink");
   };
 
   const handleEndSession = async () => {
