@@ -19,6 +19,7 @@ import {
   calculateTimeUntilSober,
 } from "@/src/utils/calculateBAC";
 import { ActiveSession } from "@/src/types/sessions";
+import { formatSoberAt } from "@/src/utils/formatSoberAt";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -33,6 +34,7 @@ export default function HomeScreen() {
   const [bacLevel, setBacLevel] = useState(0);
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isEndingSession, setIsEndingSession] = useState(false);
+  const [soberAt, setSoberAt] = useState<Date | null>(null);
 
   useEffect(() => {
     if (!activeSession?.drinks?.length) {
@@ -40,6 +42,13 @@ export default function HomeScreen() {
       setTime({ hours: 0, minutes: 0, seconds: 0 });
       return;
     }
+
+    const initialBac = calculateCurrentBAC(activeSession.drinks);
+    const initialTime = calculateTimeUntilSober(initialBac);
+    const totalSeconds =
+      initialTime.hours * 3600 + initialTime.minutes * 60 + initialTime.seconds;
+    setSoberAt(new Date(Date.now() + totalSeconds * 1000));
+
     const tick = async () => {
       const bac = calculateCurrentBAC(activeSession.drinks);
       setBacLevel(bac);
@@ -52,6 +61,7 @@ export default function HomeScreen() {
           setActiveSession(null);
           setBacLevel(0);
           setTime({ hours: 0, minutes: 0, seconds: 0 });
+          setSoberAt(null);
         } catch (error) {
           setError(
             error instanceof Error
@@ -153,7 +163,7 @@ export default function HomeScreen() {
             hours={time.hours}
             minutes={time.minutes}
             seconds={time.seconds}
-            soberTime={"--:--"}
+            soberTime={formatSoberAt(soberAt)}
             drinkCount={activeSession.totalDrinks}
             onAddDrink={handleAddDrink}
             onEndSession={handleEndSession}
