@@ -7,7 +7,9 @@ export const newDrinkSchema = z.object({
       .min(1, "Drink name is required"),
     volumeMl: z
       .number("Drink amount in Ml must be a positive number")
-      .positive("Drink amount in Ml must be a positive number"),
+      .positive("Drink amount in Ml must be a positive number")
+      .lt(2000, "Drink volume must be at most 2L"),
+
     abv: z
       .number()
       .gt(0, "Drink abv must be greater than 0")

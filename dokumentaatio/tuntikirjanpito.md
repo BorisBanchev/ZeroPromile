@@ -36,4 +36,6 @@
 | 18.3. | 2    | Korjaa bugi UI:ssa, jossa bac < 0.01 näytettiin 0.0 muodossa, Sessio nyt päättyy automaattisesti, kun käyttäjän bac taso on 0.00                                                                            |
 | 19.3. | 2    | Lisää parempi tyypitys frontendin service funktioihin ja paranna tyypitystä yleisesti                                                                                                                       |
 | 20.3. | 2    | Lisää backendiin global error middleware ja custom AppError class, nyt try/catch lohkot myös poistettu sillä express 5 catchaa virheet automaattisesti async funktioissa                                    |
-|  yht  | 91,5 |                                                                                                                                                                                                             |
+| 23.3. | 2,5  | Korjaa käyttäjän kirjautumiseen liittyvä bugi acesstokenin kanssa, Lisää soberAt ominaisuus, joka näyttää päivän ja kellonajan, jolloin käyttäjä on sober                                                   |
+| 24.3. | 0,5  | Paranna painon ja alkoholin määrän validointia backendissä, korjaa bugi, jossa router.push stackkaa näkymiä päällekkäin eli käytä router.dismissTo                                                          |
+|  yht  | 94,5 |                                                                                                                                                                                                             |

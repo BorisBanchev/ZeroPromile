@@ -14,7 +14,7 @@ export const AuthFooter = ({ description, navigateText }: AuthFooterProps) => {
   };
 
   const navigateToLogin = (): void => {
-    router.navigate("/login");
+    router.dismissTo("/login");
   };
   const isLoginFooter = navigateText === "Sign Up";
 
