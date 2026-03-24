@@ -7,9 +7,9 @@ interface SessionsHeaderProps {
 
 const SessionsHeader = ({ title, description }: SessionsHeaderProps) => {
   return (
-    <View>
-      <Text className="text-white text-xl">{title}</Text>
-      <Text className="text-gray-400 text-sm">{description}</Text>
+    <View className="flex-1">
+      <Text className="text-white text-2xl font-bold">{title}</Text>
+      <Text className="text-gray-400 text-xs font-semibold">{description}</Text>
     </View>
   );
 };
