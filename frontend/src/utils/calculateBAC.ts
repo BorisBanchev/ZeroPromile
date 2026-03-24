@@ -36,7 +36,6 @@ export const calculateTimeUntilSober = (
   bac: number,
 ): { hours: number; minutes: number; seconds: number } => {
   const totalSeconds = Math.ceil((bac / BETA) * 3600);
-
   return {
     hours: Math.floor(totalSeconds / 3600),
     minutes: Math.floor((totalSeconds % 3600) / 60),
