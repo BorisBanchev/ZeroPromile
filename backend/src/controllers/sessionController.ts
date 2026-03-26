@@ -257,6 +257,8 @@ export const getActiveSession = async (req: Request, res: Response) => {
         consumedAt: d.consumedAt.toISOString(),
         bacContribution: d.bacContribution ?? 0,
       })),
+      startedAt: session.startedAt.toISOString(),
+      endedAt: session.endedAt?.toISOString(),
     },
   });
 };

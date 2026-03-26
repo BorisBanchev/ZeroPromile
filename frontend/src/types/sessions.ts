@@ -4,6 +4,8 @@ export interface ActiveSession {
   sessionName: string;
   totalDrinks: number;
   drinks: DrinkSnapshot[];
+  startedAt: string;
+  endedAt: string;
 }
 
 export interface GetActiveSessionResponse {
@@ -14,6 +16,8 @@ export interface GetActiveSessionResponse {
     sessionName: string;
     totalDrinks: number;
     drinks: DrinkSnapshot[];
+    startedAt: string;
+    endedAt: string;
   };
 }
 export interface StartSessionRequest {

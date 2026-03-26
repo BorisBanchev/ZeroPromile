@@ -19,7 +19,7 @@ import {
   calculateTimeUntilSober,
 } from "@/src/utils/calculateBAC";
 import { ActiveSession } from "@/src/types/sessions";
-import { formatSoberAt } from "@/src/utils/formatSoberAt";
+import { formatDateToDateAndTime } from "@/src/utils/formatDateToDateAndTime";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -163,7 +163,7 @@ export default function HomeScreen() {
             hours={time.hours}
             minutes={time.minutes}
             seconds={time.seconds}
-            soberTime={formatSoberAt(soberAt)}
+            soberTime={formatDateToDateAndTime(soberAt)}
             drinkCount={activeSession.totalDrinks}
             onAddDrink={handleAddDrink}
             onEndSession={handleEndSession}
