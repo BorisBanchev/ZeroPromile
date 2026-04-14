@@ -24,39 +24,40 @@ export default function LoginScreen() {
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#0A1628" />
-      <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top", "bottom"]}>
+      <SafeAreaView
+        className="flex-1 px-6 justify-center bg-[#0A1628]"
+        edges={["top", "bottom"]}
+      >
         <Notification />
-        <View className="flex-1 px-6 justify-center">
-          <AuthHeader
-            LogoText="ZP"
-            headerBluish={["Zero", "Promile"]}
-            subheader="Know when you are safe"
-          />
-          <View className="mb-4">
-            <EmailInput email={email} setEmail={setEmail} />
-          </View>
-          <View className="mb-4">
-            <PasswordInput
-              password={password}
-              setPassword={setPassword}
-              showPassword={showPassword}
-              setShowPassword={setShowPassword}
-            />
-          </View>
-          <AuthButton
-            onPressFunction={handleLogin}
-            isLoading={isLoading}
-            email={email}
+        <AuthHeader
+          LogoText="ZP"
+          headerBluish={["Zero", "Promile"]}
+          subheader="Know when you are safe"
+        />
+        <View className="mb-4">
+          <EmailInput email={email} setEmail={setEmail} />
+        </View>
+        <View className="mb-4">
+          <PasswordInput
             password={password}
-            buttonText="Login ->"
-            loadingButtonText="Logging In..."
+            setPassword={setPassword}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
           />
-          <View className="flex-row justify-center">
-            <AuthFooter
-              description="Do not have an account?"
-              navigateText="Sign Up"
-            />
-          </View>
+        </View>
+        <AuthButton
+          onPressFunction={handleLogin}
+          isLoading={isLoading}
+          email={email}
+          password={password}
+          buttonText="Login ->"
+          loadingButtonText="Logging In..."
+        />
+        <View className="flex-row justify-center">
+          <AuthFooter
+            description="Do not have an account?"
+            navigateText="Sign Up"
+          />
         </View>
       </SafeAreaView>
     </>

@@ -15,6 +15,11 @@ export interface DrinkInput {
   timeSinceStart: number;
 }
 
+export interface DrinkSnapshot {
+  consumedAt: string;
+  bacContribution: number;
+}
+
 export interface TimeUntilSoberResult {
   currentBac: number;
   untilSober: {
@@ -94,19 +99,20 @@ export interface GetSessionTimelineResponseBody {
   };
 }
 
-export interface SessionSummary {
+export interface Session {
   sessionId: string;
   sessionName: string;
+  totalDrinks: number;
+  drinks: DrinkSnapshot[];
   startedAt: string;
   endedAt: string | null;
   active: boolean;
-  totalDrinks: number;
 }
 
 export interface GetSessionsResponseBody {
   status: string;
   message: string;
   data: {
-    sessions: SessionSummary[];
+    sessions: Session[];
   };
 }

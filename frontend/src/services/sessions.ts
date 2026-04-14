@@ -3,10 +3,8 @@ import { useAuthStore } from "../store/useAuthStore";
 import { ErrorResponse } from "../types/error";
 import {
   GetSessionsResponse,
-  ActiveSession,
   EndSessionResponse,
   StartSessionResponse,
-  GetActiveSessionResponse,
 } from "../types/sessions";
 
 const getSessions = async (
@@ -34,31 +32,6 @@ const getSessions = async (
   }
 
   return data;
-};
-
-const getActiveSession = async (
-  accessToken: string,
-): Promise<ActiveSession | null> => {
-  const response = await fetch(`${API_URL}/sessions/active`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-
-  if (response.status === 401) {
-    const newToken = await useAuthStore.getState().refreshAccessToken();
-    return getActiveSession(newToken);
-  }
-
-  if (response.status === 404) return null;
-
-  const body: GetActiveSessionResponse | ErrorResponse = await response.json();
-  if ("error" in body) {
-    throw new Error(body.error || "Failed to load active session");
-  }
-  if (!response.ok) {
-    throw new Error("Failed to load active session");
-  }
-
-  return body.data;
 };
 
 const startSession = async (
@@ -120,5 +93,4 @@ export default {
   startSession,
   endSession,
   getSessions,
-  getActiveSession,
 };
