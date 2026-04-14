@@ -12,25 +12,21 @@ import { Notification } from "@/src/components/ui/Notification";
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { useNotificationStore } from "@/src/store/useNotificationStore";
 import { useRouter } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
 import sessionsService from "@/src/services/sessions";
 import {
   calculateCurrentBAC,
   calculateTimeUntilSober,
 } from "@/src/utils/calculateBAC";
-import { ActiveSession } from "@/src/types/sessions";
-import { formatDateToDateAndTime } from "@/src/utils/formatDateToDateAndTime";
+import { formatDateForSoberAt } from "@/src/utils/formatDateToDateAndTime";
+import { useSessions } from "@/src/hooks/useSessions";
 
 export default function HomeScreen() {
   const router = useRouter();
   const accessToken = useAuthStore((state) => state.accessToken);
   const setError = useNotificationStore((state) => state.setError);
   const setSuccess = useNotificationStore((state) => state.setSuccess);
-
-  const [activeSession, setActiveSession] = useState<ActiveSession | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(true);
+  const { sessions, refetchSessions } = useSessions();
+  const activeSession = sessions?.find((s) => s.active) ?? null;
   const [bacLevel, setBacLevel] = useState(0);
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isEndingSession, setIsEndingSession] = useState(false);
@@ -58,7 +54,7 @@ export default function HomeScreen() {
         setIsEndingSession(true);
         try {
           await sessionsService.endSession(accessToken);
-          setActiveSession(null);
+          await refetchSessions();
           setBacLevel(0);
           setTime({ hours: 0, minutes: 0, seconds: 0 });
           setSoberAt(null);
@@ -76,31 +72,13 @@ export default function HomeScreen() {
     void tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [activeSession?.drinks, accessToken, isEndingSession, setError]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchActiveSession = async () => {
-        if (!accessToken) {
-          setIsLoading(false);
-          return;
-        }
-
-        try {
-          const session = await sessionsService.getActiveSession(accessToken);
-          setActiveSession(session);
-        } catch (error) {
-          setError(
-            error instanceof Error ? error.message : "Failed to load session",
-          );
-        } finally {
-          setIsLoading(false);
-        }
-      };
-
-      void fetchActiveSession();
-    }, [accessToken, setError]),
-  );
+  }, [
+    activeSession?.drinks,
+    accessToken,
+    isEndingSession,
+    setError,
+    refetchSessions,
+  ]);
 
   const handleStartSession = () => {
     router.navigate("/modals/start-session");
@@ -116,7 +94,7 @@ export default function HomeScreen() {
     setIsEndingSession(true);
     try {
       await sessionsService.endSession(accessToken);
-      setActiveSession(null);
+      await refetchSessions();
       setBacLevel(0);
       setTime({ hours: 0, minutes: 0, seconds: 0 });
       setSuccess("Session ended successfully");
@@ -132,6 +110,7 @@ export default function HomeScreen() {
   const handleViewHistory = () => {
     console.log("View history pressed");
   };
+  const isLoading = sessions === null;
 
   if (isLoading) {
     return (
@@ -163,14 +142,14 @@ export default function HomeScreen() {
             hours={time.hours}
             minutes={time.minutes}
             seconds={time.seconds}
-            soberTime={formatDateToDateAndTime(soberAt)}
+            soberTime={formatDateForSoberAt(soberAt)}
             drinkCount={activeSession.totalDrinks}
             onAddDrink={handleAddDrink}
             onEndSession={handleEndSession}
           />
         )}
         <HistoryLink onPress={handleViewHistory} />
-        <Disclaimer disclaimerText="Estimatates only. Never use for medical, legal, or driving decisions." />
+        <Disclaimer disclaimerText="Estimates only. Never use for medical, legal, or driving decisions." />
       </ScrollView>
     </SafeAreaView>
   );

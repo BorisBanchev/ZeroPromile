@@ -1,23 +1,15 @@
-import { View, Text } from "react-native";
-import { useFetchActiveSession } from "@/src/hooks/useFetchActiveSession";
-import { useFocusEffect } from "expo-router";
-import { useCallback } from "react";
+import { View } from "react-native";
 import ActiveSessionCard from "./ActiveSessionCard";
+import { useSessions } from "@/src/hooks/useSessions";
 
 const SessionsSection = () => {
-  const { activeSession, loadingActiveSession, fetchActiveSession } =
-    useFetchActiveSession();
+  const { sessions } = useSessions();
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchActiveSession();
-    }, [fetchActiveSession]),
-  );
+  const activeSession = sessions?.find((session) => session.active);
 
   return (
     <View>
       {activeSession && <ActiveSessionCard activeSession={activeSession} />}
-      <Text>Past Sessions:</Text>
     </View>
   );
 };

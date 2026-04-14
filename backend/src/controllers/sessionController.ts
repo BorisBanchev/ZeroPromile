@@ -5,7 +5,6 @@ import {
   EndSessionResponseBody,
   GetSessionsResponseBody,
   GetSessionTimelineResponseBody,
-  SessionSummary,
   StartSessionRequestBody,
   StartSessionResponseBody,
   TimelineDataPoint,
@@ -221,13 +220,17 @@ export const getSessionTimeline = async (
   });
 };
 
-export const getActiveSession = async (req: Request, res: Response) => {
+export const getUserSessions = async (
+  req: Request,
+  res: Response<GetSessionsResponseBody | ErrorResponseBody>,
+) => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
 
-  const session = await prisma.session.findFirst({
-    where: { userId: req.user.id, active: true },
+  const sessions = await prisma.session.findMany({
+    where: { userId: req.user.id },
+    orderBy: { startedAt: "desc" },
     include: {
       drinks: {
         orderBy: { consumedAt: "asc" },
@@ -242,59 +245,24 @@ export const getActiveSession = async (req: Request, res: Response) => {
     },
   });
 
-  if (!session) {
-    throw new AppError("No active session found", 404);
-  }
-
-  return res.status(200).json({
-    status: "success",
-    message: "Active session retrieved",
-    data: {
-      sessionId: session.id,
-      sessionName: session.name,
-      totalDrinks: session._count.drinks,
-      drinks: session.drinks.map((d) => ({
-        consumedAt: d.consumedAt.toISOString(),
-        bacContribution: d.bacContribution ?? 0,
-      })),
-      startedAt: session.startedAt.toISOString(),
-      endedAt: session.endedAt?.toISOString(),
-    },
-  });
-};
-
-export const getUserSessions = async (
-  req: Request,
-  res: Response<GetSessionsResponseBody | ErrorResponseBody>,
-) => {
-  if (!req.user) {
-    throw new AppError("Not authorized", 401);
-  }
-
-  const sessions = await prisma.session.findMany({
-    where: { userId: req.user.id },
-    orderBy: { startedAt: "desc" },
-    include: {
-      _count: {
-        select: { drinks: true },
-      },
-    },
-  });
-
-  const sessionSummaries: SessionSummary[] = sessions.map((session) => ({
+  const result = sessions.map((session) => ({
     sessionId: session.id,
     sessionName: session.name,
     startedAt: session.startedAt.toISOString(),
-    endedAt: session.endedAt ? session.endedAt.toISOString() : null,
+    endedAt: session.endedAt?.toISOString() ?? null,
     active: session.active,
     totalDrinks: session._count.drinks,
+    drinks: session.drinks.map((d) => ({
+      consumedAt: d.consumedAt.toISOString(),
+      bacContribution: d.bacContribution ?? 0,
+    })),
   }));
 
   return res.status(200).json({
     status: "success",
     message: "Sessions retrieved",
     data: {
-      sessions: sessionSummaries,
+      sessions: result,
     },
   });
 };
