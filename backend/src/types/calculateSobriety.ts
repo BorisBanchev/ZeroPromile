@@ -62,6 +62,7 @@ export interface AddDrinkResponseBody {
       consumedAt: string;
       bacContribution: number;
     };
+    peakBac: number;
     currentBAC: number;
     timeUntilSobriety: {
       hours: number;

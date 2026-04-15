@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Session" ADD COLUMN     "peakBac" DOUBLE PRECISION NOT NULL DEFAULT 0;
