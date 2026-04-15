@@ -5,6 +5,7 @@ export interface Session {
   sessionName: string;
   totalDrinks: number;
   drinks: DrinkSnapshot[];
+  peakBac: number;
   startedAt: string;
   endedAt: string | null;
   active: boolean;

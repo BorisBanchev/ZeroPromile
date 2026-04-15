@@ -88,31 +88,49 @@ export const addDrinkToSession = async (
     distributionFactor,
   );
 
-  await prisma.sessionDrink.create({
-    data: {
-      sessionId: session.id,
-      name: drink.name,
-      volumeMl: drink.volumeMl,
-      abv: drink.abv,
-      bacContribution,
-      consumedAt: new Date(),
-    },
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.sessionDrink.create({
+      data: {
+        sessionId: session.id,
+        name: drink.name,
+        volumeMl: drink.volumeMl,
+        abv: drink.abv,
+        bacContribution,
+        consumedAt: new Date(),
+      },
+    });
+
+    const drinks = await tx.sessionDrink.findMany({
+      where: { sessionId: session.id },
+      orderBy: { consumedAt: "asc" },
+      select: { consumedAt: true, bacContribution: true },
+    });
+
+    const drinksForCalc = drinks.map((d) => ({
+      time: new Date(d.consumedAt).getTime(),
+      bac: d.bacContribution ?? 0,
+    }));
+
+    const bacNow = currentBAC(drinksForCalc, Date.now());
+
+    await tx.$executeRaw`
+      UPDATE "Session"
+      SET "peakBac" = GREATEST("peakBac", ${bacNow})
+      WHERE id = ${session.id}
+    `;
+
+    const updatedSession = await tx.session.findUnique({
+      where: { id: session.id },
+      select: { peakBac: true },
+    });
+
+    return {
+      bacNow,
+      peakBac: updatedSession!.peakBac,
+    };
   });
 
-  const drinks = await prisma.sessionDrink.findMany({
-    where: { sessionId: session.id },
-    orderBy: { consumedAt: "asc" },
-    select: { consumedAt: true, bacContribution: true },
-  });
-
-  const drinksForCalc = drinks.map((d) => ({
-    time: new Date(d.consumedAt).getTime(),
-    bac: d.bacContribution ?? 0,
-  }));
-
-  const timeNowMs = Date.now();
-  const totalPromilles = currentBAC(drinksForCalc, timeNowMs);
-  const sober = timeUntilSober(totalPromilles);
+  const sober = timeUntilSober(result.bacNow);
 
   return res.status(201).json({
     status: "success",
@@ -126,7 +144,8 @@ export const addDrinkToSession = async (
         consumedAt: new Date().toISOString(),
         bacContribution,
       },
-      currentBAC: totalPromilles,
+      currentBAC: result.bacNow,
+      peakBac: result.peakBac,
       timeUntilSobriety: {
         hours: sober.untilSober.hours,
         minutes: sober.untilSober.minutes,
@@ -252,6 +271,7 @@ export const getUserSessions = async (
     endedAt: session.endedAt?.toISOString() ?? null,
     active: session.active,
     totalDrinks: session._count.drinks,
+    peakBac: session.peakBac,
     drinks: session.drinks.map((d) => ({
       consumedAt: d.consumedAt.toISOString(),
       bacContribution: d.bacContribution ?? 0,

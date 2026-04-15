@@ -48,7 +48,16 @@ const ActiveSessionCard = ({ activeSession }: { activeSession: Session }) => {
 
             <View className="flex-row items-center gap-1">
               <Ionicons name={"trending-up-outline"} size={14} color="grey" />
-              <Text className="text-[#32e1ca] text-xs">Peak: 0.00%</Text>
+              <Text
+                style={
+                  activeSession.peakBac > 0
+                    ? { color: "#fa6171" }
+                    : { color: "#32e1ca" }
+                }
+                className="text-xs"
+              >
+                Peak: {activeSession.peakBac.toFixed(2)}%
+              </Text>
             </View>
           </View>
         </View>

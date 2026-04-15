@@ -34,6 +34,7 @@ model Session {
   endedAt DateTime?
   active Boolean  @default(true)
   drinks  SessionDrink[]
+  peakBac Float @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
