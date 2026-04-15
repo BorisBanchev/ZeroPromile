@@ -8,7 +8,6 @@ import { Session } from "../types/sessions";
 
 export const useSessions = () => {
   const [sessions, setSessions] = useState<Session[] | null>(null);
-
   const accessToken = useAuthStore((state) => state.accessToken);
   const setError = useNotificationStore((state) => state.setError);
 
@@ -33,7 +32,6 @@ export const useSessions = () => {
   );
 
   const totalSessions = sessions?.length ?? 0;
-  console.log("Sessions:", sessions);
   const thisMonthSessions =
     sessions?.filter((session) => {
       const sessionDate = new Date(session.startedAt);
