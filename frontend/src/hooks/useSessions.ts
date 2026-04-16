@@ -1,4 +1,3 @@
-import { SessionInclude } from "./../../../backend/src/generated/prisma/models/Session";
 import sessionsService from "@/src/services/sessions";
 import { useCallback, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";

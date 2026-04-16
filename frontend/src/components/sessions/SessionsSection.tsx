@@ -25,7 +25,7 @@ const SessionsSection = () => {
             Active Session
           </Text>
 
-          <SessionCard session={activeSession} active={true} />
+          <SessionCard session={activeSession} />
         </View>
       )}
 
@@ -34,11 +34,7 @@ const SessionsSection = () => {
           <Text className="text-gray-400 font-semibold mb-2">{month}</Text>
 
           {monthSessions.map((session) => (
-            <SessionCard
-              key={session.sessionId}
-              session={session}
-              active={session.active}
-            />
+            <SessionCard key={session.sessionId} session={session} />
           ))}
         </View>
       ))}

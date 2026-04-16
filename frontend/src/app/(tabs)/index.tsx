@@ -108,7 +108,7 @@ export default function HomeScreen() {
   };
 
   const handleViewHistory = () => {
-    console.log("View history pressed");
+    router.navigate("/(tabs)/sessions");
   };
   const isLoading = sessions === null;
 
