@@ -42,5 +42,6 @@
 | 15.4. | 5    | Lisää sessiot sessions sivulle ryhmiteltynä kuukausien mukaisesti, hae peakBac backendistä ja renderöi se clientissa                                                                                               |
 | 16.4. | 4,5  | yksittäisen session sivun aloitus ja suunnittelu                                                                                                                                                                   |
 | 17.4. | 2,5  | Yksittäisen session sivun jatkamista, peak bac, total drinks, duration                                                                                                                                             |
+| 18.4. | 3,5  | Yksittäisen session sivu renderöi total alcohol in grams, refaktorointia session sivulle komponentteihin                                                                                                           |
 
-| yht | 111 | |
+| yht | 117 | |
