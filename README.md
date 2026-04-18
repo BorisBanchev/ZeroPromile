@@ -1,7 +1,7 @@
 ![Staging CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=staging)
 ![Production CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/production.yaml/badge.svg?branch=main)
 
-# ZeroPromile 🍺⏱️
+# ZeroPromile
 
 ZeroPromile is a full-stack mobile application that estimates a user’s blood alcohol concentration (BAC) and calculates the estimated time until complete sobriety (0.00‰).  
 The app uses deterministic, formula-based calculations and presents the results in a clear, mobile-first user experience.
@@ -10,7 +10,7 @@ The app uses deterministic, formula-based calculations and presents the results 
 
 ---
 
-## 📌 Problem we are solving
+## Problem we are solving
 
 People often underestimate how long alcohol remains in their bloodstream, which can lead to unsafe decisions.  
 ZeroPromile helps users understand how alcohol intake affects their body by estimating BAC levels and predicting when they will be sober again.
@@ -28,9 +28,9 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 
 ---
 
-## 🚀 Features
+## Features
 
-### Core Features (MVP)
+### Core Features
 
 - User registration and authentication
 - User profile with weight and gender
@@ -44,12 +44,12 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 
 ## Tech Stack
 
-### 📱 Frontend
+### Frontend
 
 - **React Native (Expo)**
 - **TypeScript**
 
-### 🌐 Backend
+### Backend
 
 - **Node.js**
 - **Express.js**
@@ -57,18 +57,18 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 - RESTful API architecture
 - JWT-based authentication
 
-### 🗄 Database
+### Database
 
 - **PostgreSQL (Prisma ORM)**
 
-### 🚀 DevOps / CI-CD
+### DevOps / CI-CD
 
 - Automated linting and testing
 - Build and deployment pipelines (e.g. GitHub Actions)
 
 ---
 
-## 🔐 Authentication & Security
+## Authentication & Security
 
 - JWT-based authentication
 - Protected API routes
