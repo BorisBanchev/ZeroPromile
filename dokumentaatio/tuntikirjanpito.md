@@ -41,4 +41,6 @@
 | 14.4. | 4    | refaktorointia backendissä, alustava sessions sivu frontendissa, aktiivinen sessio haetaan kaikkien sessions hookin avulla useSessions                                                                             |
 | 15.4. | 5    | Lisää sessiot sessions sivulle ryhmiteltynä kuukausien mukaisesti, hae peakBac backendistä ja renderöi se clientissa                                                                                               |
 | 16.4. | 4,5  | yksittäisen session sivun aloitus ja suunnittelu                                                                                                                                                                   |
-|  yht  | 111  |                                                                                                                                                                                                                    |
+| 17.4. | 2,5  | Yksittäisen session sivun jatkamista, peak bac, total drinks, duration                                                                                                                                             |
+
+| yht | 111 | |
