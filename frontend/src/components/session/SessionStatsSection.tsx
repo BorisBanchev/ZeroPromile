@@ -38,7 +38,7 @@ const SessionStatsSection = ({
       />
       <SessionStatsBox
         label={"Duration"}
-        value={formatSessionDuration(session.startedAt)}
+        value={formatSessionDuration(session.startedAt, session.endedAt)}
         icon={<Ionicons name={"time-outline"} size={14} color="grey" />}
       />
       <SessionStatsBox

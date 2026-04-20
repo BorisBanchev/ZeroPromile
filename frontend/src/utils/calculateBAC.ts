@@ -1,9 +1,7 @@
+import { DrinkSnapshot } from "../types/drinks";
+
 const BETA = 0.15;
 const HOURS_MS = 1000 * 60 * 60;
-export interface DrinkSnapshot {
-  consumedAt: string;
-  bacContribution: number;
-}
 
 export const calculateCurrentBAC = (
   drinks: DrinkSnapshot[],

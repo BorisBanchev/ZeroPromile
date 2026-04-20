@@ -256,6 +256,9 @@ export const getUserSessions = async (
         select: {
           consumedAt: true,
           bacContribution: true,
+          name: true,
+          volumeMl: true,
+          abv: true,
         },
       },
       _count: {
@@ -275,6 +278,9 @@ export const getUserSessions = async (
     drinks: session.drinks.map((d) => ({
       consumedAt: d.consumedAt.toISOString(),
       bacContribution: d.bacContribution ?? 0,
+      drinkName: d.name,
+      volumeMl: d.volumeMl,
+      abv: d.abv,
     })),
   }));
 

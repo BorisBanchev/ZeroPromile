@@ -1,4 +1,4 @@
-import { DrinkSnapshot } from "../utils/calculateBAC";
+import { DrinkSnapshot } from "./drinks";
 
 export interface Session {
   sessionId: string;

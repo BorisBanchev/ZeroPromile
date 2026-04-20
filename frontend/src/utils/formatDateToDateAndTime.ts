@@ -13,9 +13,21 @@ export const formatDateForSoberAt = (date: Date | null) => {
 };
 
 export const formatDateForSessionsData = (date: Date | null) => {
-  if (!date) return { dateString: "--:--", timeString: "--:--" };
-  const dateAndTime = dateFormatter.format(date);
-  const dateString = dateAndTime.split(" at ")[0];
-  const timeString = dateAndTime.split(" at ")[1];
+  if (!date) {
+    return { dateString: "--", timeString: "--" };
+  }
+
+  const dateString = date.toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  });
+
+  const timeString = date.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
   return { dateString, timeString };
 };
