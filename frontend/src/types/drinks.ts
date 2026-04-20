@@ -25,3 +25,11 @@ export interface AddDrinkResponse {
     };
   };
 }
+
+export interface DrinkSnapshot {
+  consumedAt: string;
+  bacContribution: number;
+  drinkName: string;
+  volumeMl: number;
+  abv: number;
+}

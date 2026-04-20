@@ -19,6 +19,7 @@ const SessionCard = ({ session }: { session: Session }) => {
   const dateAndTimeStrings = formatDateForSessionsData(
     new Date(session.startedAt),
   );
+
   return (
     <View className="gap-2">
       <TouchableOpacity
@@ -38,8 +39,8 @@ const SessionCard = ({ session }: { session: Session }) => {
               </View>
             )}
           </View>
-          <View className="flex-row items-center justify-between">
-            <Text className="text-slate-400 text-xs">
+          <View className="flex-row items-center">
+            <Text className="text-slate-400 text-xs flex-1">
               {dateAndTimeStrings.dateString}
             </Text>
             <Text className="text-slate-400">{">"}</Text>

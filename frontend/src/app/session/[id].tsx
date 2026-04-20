@@ -1,7 +1,6 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { useSessions } from "@/src/hooks/useSessions";
 import { ScrollView, Text, TouchableOpacity } from "react-native";
 import { Notification } from "@/src/components/ui/Notification";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -9,6 +8,8 @@ import SessionPageHeader from "@/src/components/session/SessionPageHeader";
 import { useAuthStore } from "@/src/store/useAuthStore";
 import { calculateSessionTotalAlcoholGrams } from "@/src/utils/calculateTotalAlcoholGrams";
 import SessionStatsSection from "@/src/components/session/SessionStatsSection";
+import BacChartOverTime from "@/src/components/session/BacChartOverTime";
+import { useSessions } from "@/src/hooks/useSessions";
 
 export default function SessionScreen() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function SessionScreen() {
           session={session}
           sessionTotalAlcoholGrams={sessionTotalAlcoholGrams}
         />
+        <BacChartOverTime session={session} />
       </ScrollView>
     </SafeAreaView>
   );

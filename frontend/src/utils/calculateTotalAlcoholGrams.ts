@@ -1,4 +1,4 @@
-import { DrinkSnapshot } from "./calculateBAC";
+import { DrinkSnapshot } from "../types/drinks";
 
 export const calculateSessionTotalAlcoholGrams = (
   drinks: DrinkSnapshot[],
