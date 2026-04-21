@@ -10,3 +10,11 @@ export const calculateSessionTotalAlcoholGrams = (
     return sum + grams;
   }, 0);
 };
+
+export const calculateDrinkAlcoholGrams = (
+  drink: DrinkSnapshot,
+  bodyWeightKg: number,
+  r: number,
+): number => {
+  return drink.bacContribution * bodyWeightKg * r;
+};

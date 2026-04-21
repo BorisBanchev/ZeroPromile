@@ -43,7 +43,7 @@
 | 16.4. | 4,5  | yksittäisen session sivun aloitus ja suunnittelu                                                                                                                                                                   |
 | 17.4. | 2,5  | Yksittäisen session sivun jatkamista, peak bac, total drinks, duration                                                                                                                                             |
 | 18.4. | 3,5  | Yksittäisen session sivu renderöi total alcohol in grams, refaktorointia session sivulle komponentteihin                                                                                                           |
-| 19.4. | 6    | Yksittäisen sivun chartsin suunnittelu, react-native-gifted docs lukemista, aloitus                                                                                                                                |
-| 20.4. | 8    | Yksittäisen sivun chartsin apukomponentti, itse chartsin komponentti renderöi chartsin oikein, charts data haetaan useChartData hookilla                                                                           |
-
-| yht | 131 | |
+| 19.4. | 6    | Yksittäisen session sivun chartsin suunnittelu, react-native-gifted docs lukemista, aloitus                                                                                                                        |
+| 20.4. | 8    | Yksittäisen session sivun chartsin apukomponentti, itse chartsin komponentti renderöi chartsin oikein, charts data haetaan useChartData hookilla                                                                   |
+| 21.4. | 4    | Yksittäisen session sivulla näytetään listassa juomia esittävät cardsit listassa                                                                                                                                   |
+|  yht  | 135  |                                                                                                                                                                                                                    |
