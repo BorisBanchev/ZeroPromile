@@ -10,6 +10,7 @@ import { calculateSessionTotalAlcoholGrams } from "@/src/utils/calculateTotalAlc
 import SessionStatsSection from "@/src/components/session/SessionStatsSection";
 import BacChartOverTime from "@/src/components/session/BacChartOverTime";
 import { useSessions } from "@/src/hooks/useSessions";
+import SessionDrinkBoxes from "@/src/components/session/SessionDrinkBoxes";
 
 export default function SessionScreen() {
   const router = useRouter();
@@ -30,7 +31,7 @@ export default function SessionScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#0A1628]" edges={["top"]}>
       <Notification />
-      <ScrollView className="px-4 py-">
+      <ScrollView className="px-4 py-4">
         <TouchableOpacity
           onPress={() => router.back()}
           className="flex-row items-center gap-1 mb-3 "
@@ -44,6 +45,7 @@ export default function SessionScreen() {
           sessionTotalAlcoholGrams={sessionTotalAlcoholGrams}
         />
         <BacChartOverTime session={session} />
+        <SessionDrinkBoxes session={session} />
       </ScrollView>
     </SafeAreaView>
   );
