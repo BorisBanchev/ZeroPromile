@@ -53,8 +53,7 @@ This section estimates how long it will take for your BAC to return to **0.00‰
 - **End Session**  
   Finish the current session when you are done
 
-- **Automatic Session Ending**
-  Session ends automatically when your body reaches estimated BAC of **0.00‰**
+- Session ends automatically when your body reaches estimated BAC of **0.00‰**
 
 ---
 
