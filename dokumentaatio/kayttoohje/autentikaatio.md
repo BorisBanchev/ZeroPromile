@@ -11,7 +11,7 @@ Fill your user details and create an account:
 - Gender (Male or Female)
 - Weight (Kg)
 
-![Register Screen](../images/register.png)
+<img src="../images/register.png" alt="Register Screen" width="300" />
 
 ## Login
 
@@ -20,4 +20,4 @@ Fill your user details and log in into your account:
 - Email address
 - Password (at least 8 characters long)
 
-![Login Screen](../images/login.png)
+<img src="../images/login.png" alt="Login Screen" width="300" />
