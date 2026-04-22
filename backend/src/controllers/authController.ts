@@ -117,9 +117,9 @@ const refreshTokenEndpoint = async (
   }
 
   const secret: string | undefined =
-    process.env.NODE_ENV === "production"
-      ? process.env.JWT_REFRESH_TOKEN_SECRET
-      : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
+    process.env.APP_ENV === "production"
+      ? process.env.JWT_TOKEN_SECRET
+      : process.env.JWT_TOKEN_SECRET_STAGING;
 
   if (!secret) throw new AppError("REFRESH_TOKEN_SECRET not found", 401);
 

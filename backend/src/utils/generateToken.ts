@@ -4,7 +4,7 @@ import { AppError } from "../error/appError";
 
 export const generateToken = (userId: string): string => {
   const secret =
-    process.env.NODE_ENV === "production"
+    process.env.APP_ENV === "production"
       ? process.env.JWT_TOKEN_SECRET
       : process.env.JWT_TOKEN_SECRET_STAGING;
   if (!secret) throw new AppError("JWT_SECRET is not defined", 401);

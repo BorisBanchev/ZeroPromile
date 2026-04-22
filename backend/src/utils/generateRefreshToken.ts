@@ -4,9 +4,9 @@ import { AppError } from "../error/appError";
 
 export const generateRefreshToken = (userId: string): string => {
   const secret =
-    process.env.NODE_ENV === "production"
-      ? process.env.JWT_REFRESH_TOKEN_SECRET
-      : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
+    process.env.APP_ENV === "production"
+      ? process.env.JWT_TOKEN_SECRET
+      : process.env.JWT_TOKEN_SECRET_STAGING;
 
   if (!secret) throw new AppError("REFRESH_TOKEN_SECRET is not defined");
 
