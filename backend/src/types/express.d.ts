@@ -1,8 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-declare namespace Express {
-  export interface Request {
+import "express";
+
+declare module "express-serve-static-core" {
+  interface Request {
     user?: { id: string };
   }
 }
-
-export {};

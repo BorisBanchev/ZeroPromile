@@ -117,7 +117,7 @@ const refreshTokenEndpoint = async (
   }
 
   const secret: string | undefined =
-    process.env.NODE_ENV === "production"
+    process.env.APP_ENV === "production"
       ? process.env.JWT_REFRESH_TOKEN_SECRET
       : process.env.JWT_REFRESH_TOKEN_SECRET_STAGING;
 
