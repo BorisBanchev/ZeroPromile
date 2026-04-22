@@ -9,7 +9,6 @@ permissions:
   packages: write
 
 env:
-  NODE_ENV: production
   APP_ENV: staging
   IMAGE_NAME: ghcr.io/borisbanchev/zeropromile-api-staging
 
@@ -41,7 +40,9 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install
-        run: cd backend && npm ci
+        env:
+          NODE_ENV: development
+        run: cd backend && npm ci --include=dev
 
       - name: Generate Prisma
         run: cd backend && npx prisma generate
