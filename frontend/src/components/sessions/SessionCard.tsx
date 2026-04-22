@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { formatDateForSessionsData } from "@/src/utils/formatDateToDateAndTime";
 import { Ionicons } from "@expo/vector-icons";
 import { Session } from "@/src/types/sessions";
+import { getBacColor } from "@/src/utils/getBacColor";
 
 const SessionCard = ({ session }: { session: Session }) => {
   const router = useRouter();
@@ -63,11 +64,7 @@ const SessionCard = ({ session }: { session: Session }) => {
             <View className="flex-row items-center gap-1">
               <Ionicons name={"trending-up-outline"} size={14} color="grey" />
               <Text
-                style={
-                  session.peakBac > 0
-                    ? { color: "#fa6171" }
-                    : { color: "#32e1ca" }
-                }
+                style={{ color: getBacColor(session.peakBac) }}
                 className="text-xs"
               >
                 Peak: {session.peakBac.toFixed(2)}‰

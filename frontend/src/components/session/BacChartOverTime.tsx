@@ -13,6 +13,7 @@ interface BacChartOverTimeProps {
 const TOOLTIP_WIDTH = 130;
 const TOOLTIP_HEIGHT = 82;
 const POINT_SPACING = 70;
+const LEGAL_LIMIT = 0.5;
 
 const BacChartOverTime = ({ session }: BacChartOverTimeProps) => {
   const rawData = useChartData(
@@ -32,7 +33,11 @@ const BacChartOverTime = ({ session }: BacChartOverTimeProps) => {
   }));
 
   const actualMax = Math.max(...chartData.map((d) => d.value), 0);
-  const chartMax = actualMax > 0 ? Number((actualMax * 1.1).toFixed(2)) : 0.2;
+  const chartMax = Math.max(
+    Number((actualMax * 1.1).toFixed(2)),
+    Number((LEGAL_LIMIT * 1.1).toFixed(2)),
+    0.2,
+  );
   const chartWidth = chartData.length * POINT_SPACING + 80;
 
   return (
@@ -83,6 +88,23 @@ const BacChartOverTime = ({ session }: BacChartOverTimeProps) => {
           endOpacity={0.01}
           overflowTop={56}
           overflowBottom={28}
+          showReferenceLine1
+          referenceLine1Position={LEGAL_LIMIT}
+          referenceLine1Config={{
+            color: "#eab308",
+            thickness: 1,
+            type: "dashed",
+            dashWidth: 4,
+            dashGap: 4,
+            labelText: "Legal limit",
+            labelTextStyle: {
+              color: "#eab308",
+              fontSize: 10,
+              textAlign: "center",
+              width: chartWidth,
+            },
+          }}
+          referenceLinesOverChartContent={false}
           pointerConfig={{
             pointerStripColor: "rgba(73, 226, 226, 0.5)",
             pointerStripWidth: 2,
