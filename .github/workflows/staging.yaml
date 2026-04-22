@@ -103,6 +103,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Install dependencies
+        run: cd backend && npm ci
+
       - name: Run Prisma migrations (staging DB)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING }}
