@@ -7,6 +7,7 @@ import {
 } from "@expo/vector-icons";
 import { Session } from "@/src/types/sessions";
 import { formatSessionDuration } from "@/src/utils/formatSessionDuration";
+import { getBacColor } from "@/src/utils/getBacColor";
 
 interface SessionStatsSectionProps {
   session: Session;
@@ -23,7 +24,7 @@ const SessionStatsSection = ({
         label={"Peak BAC"}
         value={`${session.peakBac.toFixed(2)}‰`}
         icon={<Ionicons name={"trending-up-outline"} size={14} color="grey" />}
-        valueColor={session.peakBac > 0 ? "#fa6171" : "#32e1ca"}
+        valueColor={getBacColor(session.peakBac)}
       />
       <SessionStatsBox
         label={"Total Drinks"}
