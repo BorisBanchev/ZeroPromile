@@ -3,13 +3,13 @@
 
 ## Documentation
 
-- ![käynnistysohjeet](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/setup.md)
-- ![tuntikirjanpito](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/tuntikirjanpito.md)
+- [käynnistysohjeet](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/setup.md)
+- [tuntikirjanpito](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/tuntikirjanpito.md)
 - User manual for ZeroPromile:
-  - ![authentication manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/authenticationScreens/authenticationScreens.md)
-  - ![home screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/homeScreens)
-  - ![profile screen manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/profileScreens/profileScreen.md)
-  - ![sessions screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/sessionsScreens)
+  - [authentication manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/authenticationScreens/authenticationScreens.md)
+  - [home screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/homeScreens)
+  - [profile screen manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/profileScreens/profileScreen.md)
+  - [sessions screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/sessionsScreens)
 
 # ZeroPromile
 
