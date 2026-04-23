@@ -58,7 +58,7 @@ model SessionDrink {
 
 enum Role {
   USER
-  ADMIN
+  ADMIN // future ideas for admin
 }
 enum Gender {
   MALE
