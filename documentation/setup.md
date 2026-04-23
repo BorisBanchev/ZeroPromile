@@ -30,7 +30,7 @@ cd ..
 
 ```bash
 cd backend
-cp env.template .env
+cp .env.example .env
 cd ..
 ```
 
@@ -50,7 +50,7 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 
 ```bash
 cd frontend
-cp env.template .env
+cp .env.example .env
 cd ..
 ```
 
@@ -102,7 +102,7 @@ Use this if you want docker to manage backend + database
 
 ```bash
 cd frontend
-cp env.template .env
+cp .env.example .env
 cd ..
 ```
 
