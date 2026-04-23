@@ -3,110 +3,181 @@
 ## Prerequisites
 
 - Docker & Docker Compose
-- Node.js 20+
+- Node.js 24+
 - npm
 - Git
 
-## Quick Start
-
-### 1. Clone the Repository
+## 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd ZeroPromile
 ```
 
-### 2. Setup Frontend Environment
+## Option 1: Run locally without Docker
 
-Create a `.env` file in the `frontend` folder:
+### 1. Install dependancies
 
 ```bash
-cd frontend
-echo "EXPO_PUBLIC_NODE_ENV=development" > .env
+cd backend
+npm install
+cd ../frontend
+npm install
 cd ..
 ```
 
-### 3. Start Backend + Database
+### 2. Setup backend environment
 
-From the **project root** (`ZeroPromile/`), run:
+```bash
+cd backend
+cp env.template .env
+cd ..
+```
+
+Example `.env`:
+
+```bash
+NODE_ENV=development
+APP_ENV=development
+DATABASE_URL=postgresql://zeropromile:devpassword@localhost:5432/zeropromile
+JWT_TOKEN_SECRET_STAGING=local_dev_staging_secret
+JWT_REFRESH_TOKEN_SECRET_STAGING=local_dev_staging_refresh_secret
+JWT_EXPIRES_IN=15m
+REFRESH_TOKEN_EXPIRES_IN=7d
+```
+
+### 3. Setup frontend environment
+
+```bash
+cd frontend
+cp env.template .env
+cd ..
+```
+
+### 4. Setup Local PostgreSQL
+
+Make sure PostgreSQL is running with:
+
+- Database: `zeropromile`
+- User: `zeropromile`
+- Password: `devpassword`
+- Port: `5432`
+
+### 5. Run Prisma
+
+```bash
+cd backend
+npx prisma generate
+npx prisma migrate dev
+cd ..
+```
+
+### 6. Start Backend
+
+```bash
+cd backend
+npm run dev
+```
+
+### 7. Start Frontend
+
+In a new terminal:
+
+```bash
+cd frontend
+npm run start:dev
+```
+
+Press:
+
+- `ì` &rarr; iOS
+- `a` &rarr; Android
+- or scan QR with Expo Go
+
+## Option 2: Run locally with Docker
+
+Use this if you want docker to manage backend + database
+
+### 1. Setup frontend environment
+
+```bash
+cd frontend
+cp env.template .env
+cd ..
+```
+
+### 2. Start backend + database
 
 ```bash
 docker compose up --build
 ```
 
-Wait 10 seconds for services to start. You should see:
+Wait ~10s and you should see:
 
 - Database migrations applied
 - Backend server running on port 3001
-- Server running on port: 3001
-- DB connected via Prisma!
+- DB connected via Prisma
 
-### 4. Start Frontend
+### 3. Start frontend
 
-Open a **new terminal** window:
+In a new terminal:
 
 ```bash
 cd frontend
-npm install
 npm run start:dev
 ```
 
-Press `i` for iOS simulator or `a` for Android emulator or use the QR code with Expo Go
+### Notes!
 
----
+**Without** Docker
 
-## Working with the Database
+Use `localhost`:
 
-### Accessing the Database
+```bash
+DATABASE_URL=postgresql://zeropromile:devpassword@localhost:5432/zeropromile
+```
 
-Connect to the PostgreSQL database:
+**With** Docker
+
+Use service name `db`:
+
+```bash
+DATABASE_URL=postgresql://zeropromile:devpassword@db:5432/zeropromile
+```
+
+### Working with the database (Docker)
 
 ```bash
 docker exec -it zeropromile-db psql -U zeropromile -d zeropromile
 ```
 
-### Querying Tables
+Useful Queries:
 
-**Important:** Table names are case-sensitive and must be quoted!
-
-```sql
--- List all tables
+```bash
 \dt
 
--- Query tables (note the quotes and capital letters!)
 SELECT * FROM "User";
 SELECT * FROM "Session";
 SELECT * FROM "SessionDrink";
 
--- Exit
 \q
 ```
 
----
+### Managing Docker containers
 
-## Managing Docker Containers
-
-### Stop Containers
-
-**Option 1: Keep data**
-
-Press `Ctrl + C` in the terminal where docker-compose is running, then:
+Stop (keep data):
 
 ```bash
 docker compose down
 ```
 
-Data persists in Docker volumes - when you restart, your data will still be there.
-
-**Option 2: Remove everything including data**
+Stop (remove all data):
 
 ```bash
 docker compose down -v
 ```
 
-This removes containers AND volumes (deletes all database data).
-
-### Rebuild After Code Changes
+Rebuild:
 
 ```bash
 docker compose up --build
