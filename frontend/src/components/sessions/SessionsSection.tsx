@@ -3,13 +3,25 @@ import SessionCard from "./SessionCard";
 import { useSessions } from "@/src/hooks/useSessions";
 import { groupSessionsByMonth } from "@/src/utils/groupSessionsByMonth";
 
-const SessionsSection = () => {
+interface SessionsScreenProps {
+  searchTerm: string;
+}
+
+const SessionsSection = ({ searchTerm }: SessionsScreenProps) => {
   const { sessions } = useSessions();
 
   if (!sessions) return null;
 
-  const activeSession = sessions.find((s) => s.active);
-  const pastSessions = sessions.filter((s) => !s.active);
+  const normalizedSearch = searchTerm.toLocaleLowerCase().trim();
+
+  const filteredSessions = sessions.filter((session) => {
+    if (!normalizedSearch) return true;
+
+    return session.sessionName?.toLowerCase().includes(normalizedSearch);
+  });
+
+  const activeSession = filteredSessions.find((s) => s.active);
+  const pastSessions = filteredSessions.filter((s) => !s.active);
 
   const sorted = [...pastSessions].sort(
     (a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime(),
