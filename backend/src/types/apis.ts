@@ -1,23 +1,8 @@
+import { Session } from "./session";
+
 export interface UserCalculationData {
   weightKg: number;
   distributionFactor: number;
-}
-
-export interface Drink {
-  time: number;
-  bac: number;
-}
-
-export interface DrinkInput {
-  name: string;
-  volumeMl: number;
-  abv: number;
-  timeSinceStart: number;
-}
-
-export interface DrinkSnapshot {
-  consumedAt: string;
-  bacContribution: number;
 }
 
 export interface TimeUntilSoberResult {
@@ -81,33 +66,17 @@ export interface EndSessionResponseBody {
   };
 }
 
-export interface TimelineDataPoint {
-  consumedAt: string;
-  bacLevel: number;
-  drinkName: string;
-}
-
-export interface GetSessionTimelineResponseBody {
+export interface DeleteSessionResponseBody {
   status: string;
   message: string;
   data: {
     sessionId: string;
     sessionName: string;
-    startedAt: string;
-    endedAt: string | null;
-    active: boolean;
-    timeline: TimelineDataPoint[];
   };
 }
 
-export interface Session {
+export interface DeleteSessionRequestParams {
   sessionId: string;
-  sessionName: string;
-  totalDrinks: number;
-  drinks: DrinkSnapshot[];
-  startedAt: string;
-  endedAt: string | null;
-  active: boolean;
 }
 
 export interface GetSessionsResponseBody {

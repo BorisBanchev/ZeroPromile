@@ -1,4 +1,5 @@
-import { Drink, TimeUntilSoberResult } from "../types/calculateSobriety";
+import { TimeUntilSoberResult } from "../types/apis";
+import { Drink } from "../types/drink";
 
 const ETHANOLDENSITY: number = 0.789;
 const BETA: number = 0.15;

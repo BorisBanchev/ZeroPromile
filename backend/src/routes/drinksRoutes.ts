@@ -6,8 +6,8 @@ import {
   addDrinkToSession,
   startSession,
   endSession,
-  getSessionTimeline,
   getUserSessions,
+  deleteSession,
 } from "../controllers/sessionController";
 import { newDrinkParser } from "../middlewares/newDrinkParser";
 
@@ -23,7 +23,7 @@ router.post("/drinks", newDrinkParser, addDrinkToSession);
 
 router.patch("/endsession", endSession);
 
-router.get("/:sessionId/timeline", getSessionTimeline);
+router.delete("/:sessionId", deleteSession);
 
 router.use(errorMiddleware);
 
