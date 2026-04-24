@@ -18,6 +18,8 @@ At the top of the screen, you’ll find a quick summary:
 - **This Month**  
   The number of sessions created during the current month
 
+- You can **search** for certain sessions from the box below the summary data
+
 ---
 
 ## Active Session

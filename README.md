@@ -49,7 +49,7 @@ BAC = (Total Alcohol Consumed in grams / (Body Weight × Distribution Factor)) �
 - User can see how own **BAC (in promilles) changes** over time and after drink addition
 - Session **ends automatically** after user hits **0.00 promilles** or after **manually ending** the session
 - The app estimates time until 0.00‰ (sobriety) in **hours**, **minutes** and **seconds** **(date and time HH:MM)**
-- User can track his **active** and **past sessions** data from sessions screen
+- User can track and search his **active** and **past sessions** data from sessions screen
 - User can view more specific session data from session's screen including **BAC over time chart**
 - Clear legal and medical **disclaimers**
 
