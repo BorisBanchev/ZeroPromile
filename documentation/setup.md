@@ -98,10 +98,11 @@ Press:
 
 Use this if you want docker to manage backend + database
 
-### 1. Setup frontend environment
+### 1. Setup frontend environment and install dependancies
 
 ```bash
 cd frontend
+npm run install
 cp .env.example .env
 cd ..
 ```
