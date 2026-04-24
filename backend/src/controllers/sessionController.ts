@@ -4,11 +4,11 @@ import {
   AddDrinkResponseBody,
   EndSessionResponseBody,
   GetSessionsResponseBody,
-  GetSessionTimelineResponseBody,
   StartSessionRequestBody,
   StartSessionResponseBody,
-  TimelineDataPoint,
-} from "../types/calculateSobriety";
+  DeleteSessionRequestParams,
+  DeleteSessionResponseBody,
+} from "../types/apis";
 import { ErrorResponseBody } from "../types/errorResponse";
 import { prisma } from "../config/db";
 import {
@@ -55,6 +55,56 @@ export const startSession = async (
       sessionId: newSession.id,
       sessionName: newSession.name,
       active: newSession.active,
+    },
+  });
+};
+
+export const deleteSession = async (
+  req: Request<
+    DeleteSessionRequestParams,
+    DeleteSessionResponseBody | ErrorResponseBody,
+    unknown
+  >,
+  res: Response<DeleteSessionResponseBody | ErrorResponseBody>,
+) => {
+  if (!req.user) {
+    throw new AppError("Not authorized", 401);
+  }
+
+  const { sessionId } = req.params;
+
+  const session = await prisma.session.findUnique({
+    where: {
+      id: sessionId,
+    },
+    select: {
+      id: true,
+      userId: true,
+      name: true,
+      active: true,
+    },
+  });
+
+  if (!session || session.userId !== req.user.id) {
+    throw new AppError("Session not found", 404);
+  }
+
+  if (session.active) {
+    throw new AppError("Active session cannot be deleted", 400);
+  }
+
+  await prisma.session.delete({
+    where: {
+      id: session.id,
+    },
+  });
+
+  return res.status(200).json({
+    status: "success",
+    message: "Session deleted successfully",
+    data: {
+      sessionId: session.id,
+      sessionName: session.name,
     },
   });
 };
@@ -184,57 +234,6 @@ export const endSession = async (
       sessionId: updatedSession.id,
       sessionName: updatedSession.name,
       active: updatedSession.active,
-    },
-  });
-};
-
-export const getSessionTimeline = async (
-  req: Request<{ sessionId: string }>,
-  res: Response<GetSessionTimelineResponseBody | ErrorResponseBody>,
-) => {
-  if (!req.user) {
-    throw new AppError("Not authorized", 401);
-  }
-
-  const { sessionId } = req.params;
-
-  const session = await prisma.session.findUnique({
-    where: { id: sessionId },
-    include: {
-      drinks: {
-        orderBy: { consumedAt: "asc" },
-      },
-    },
-  });
-
-  if (!session) {
-    throw new AppError("Session not found", 404);
-  }
-
-  if (session.userId !== req.user.id) {
-    throw new AppError("Not authorized to access this session", 403);
-  }
-
-  if (session.active) {
-    throw new AppError("Session is still active. End the session first", 400);
-  }
-
-  const timeline: TimelineDataPoint[] = session.drinks.map((drink) => ({
-    consumedAt: drink.consumedAt.toISOString(),
-    bacLevel: drink.bacContribution ?? 0,
-    drinkName: drink.name,
-  }));
-
-  return res.status(200).json({
-    status: "success",
-    message: "Session timeline retrieved",
-    data: {
-      sessionId: session.id,
-      sessionName: session.name,
-      startedAt: session.startedAt.toISOString(),
-      endedAt: session.endedAt ? session.endedAt.toISOString() : null,
-      active: session.active,
-      timeline,
     },
   });
 };

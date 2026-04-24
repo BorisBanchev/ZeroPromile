@@ -19,6 +19,8 @@ This screen provides a detailed overview of a specific session, including key st
 - **Date**  
   The day the session took place
 
+- **Past sessions (no active)** can be **deleted** from the right side by pressing the trash bin icon
+
 ---
 
 ## Key Statistics

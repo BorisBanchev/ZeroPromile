@@ -5,6 +5,7 @@ import {
   GetSessionsResponse,
   EndSessionResponse,
   StartSessionResponse,
+  DeleteSessionResponseBody,
 } from "../types/sessions";
 
 const getSessions = async (
@@ -89,8 +90,38 @@ const endSession = async (accessToken: string): Promise<EndSessionResponse> => {
   return data;
 };
 
+const deleteSession = async (
+  accessToken: string,
+  sessionId: string,
+): Promise<DeleteSessionResponseBody> => {
+  const response = await fetch(`${API_URL}/sessions/${sessionId}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  const data: DeleteSessionResponseBody | ErrorResponse = await response.json();
+
+  if (response.status === 401) {
+    const newToken = await useAuthStore.getState().refreshAccessToken();
+    return deleteSession(newToken, sessionId);
+  }
+
+  if ("error" in data) {
+    throw new Error(data.error || "Failed to delete session");
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to delete session");
+  }
+
+  return data;
+};
+
 export default {
   startSession,
   endSession,
   getSessions,
+  deleteSession,
 };

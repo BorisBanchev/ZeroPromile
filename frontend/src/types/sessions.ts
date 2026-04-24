@@ -33,6 +33,15 @@ export interface GetSessionsResponse {
   };
 }
 
+export interface DeleteSessionResponseBody {
+  status: string;
+  message: string;
+  data: {
+    sessionId: string;
+    sessionName: string;
+  };
+}
+
 export interface EndSessionResponse {
   status: string;
   message: string;

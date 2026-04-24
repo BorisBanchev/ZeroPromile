@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { ScrollView, Text, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Notification } from "@/src/components/ui/Notification";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SessionPageHeader from "@/src/components/session/SessionPageHeader";
@@ -11,6 +11,7 @@ import SessionStatsSection from "@/src/components/session/SessionStatsSection";
 import BacChartOverTime from "@/src/components/session/BacChartOverTime";
 import { useSessions } from "@/src/hooks/useSessions";
 import SessionDrinkBoxes from "@/src/components/session/SessionDrinkBoxes";
+import DeleteSessionButton from "@/src/components/session/DeleteSessionButton";
 
 export default function SessionScreen() {
   const router = useRouter();
@@ -39,7 +40,18 @@ export default function SessionScreen() {
           <AntDesign name="arrow-left" size={12} color="grey" />
           <Text className="text-gray-400">Back</Text>
         </TouchableOpacity>
-        <SessionPageHeader session={session} />
+        <View className="flex-row items-start justify-between gap-3">
+          <View className="flex-1">
+            <SessionPageHeader session={session} />
+          </View>
+          {!session.active && (
+            <DeleteSessionButton
+              sessionId={session.sessionId}
+              sessionName={session.sessionName}
+              onDeleted={() => router.back()}
+            />
+          )}
+        </View>
         <SessionStatsSection
           session={session}
           sessionTotalAlcoholGrams={sessionTotalAlcoholGrams}
