@@ -15,6 +15,18 @@
   - [profile screen manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/profileScreens/profileScreen.md)
   - [sessions screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/sessionsScreens)
 
+# Open the app in Expo Go
+
+Select `Enter URL` in Expo Go:
+
+- Type this url to open the app:
+
+```bash
+exp://u.expo.dev/67e0bf68-273e-4320-996e-9b25270f2002/group/ef7a679e-2550-4803-a5bd-df60f7b29a4c
+```
+
+For `ios` you might need to paste the link in browser and select open in Expo Go
+
 # ZeroPromile
 
 ZeroPromile is a full-stack mobile application that estimates a user’s blood alcohol concentration (BAC) and calculates the estimated time until complete sobriety (0.00‰).  
