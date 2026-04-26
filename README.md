@@ -5,6 +5,8 @@
 
 - [käynnistysohjeet](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/setup.md)
 - [tuntikirjanpito](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/tuntikirjanpito.md)
+- Database documentation:
+  - [database docs](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/database/database.md)
 - User manual for ZeroPromile:
   - [authentication manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/authenticationScreens/authenticationScreens.md)
   - [home screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/homeScreens)
