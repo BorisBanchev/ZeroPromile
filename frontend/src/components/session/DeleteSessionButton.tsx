@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActivityIndicator, TouchableOpacity, Text } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { CustomAlert } from "@/src/components/ui/CustomAlert";
 import { useAuthStore } from "@/src/store/useAuthStore";

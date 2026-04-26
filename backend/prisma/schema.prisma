@@ -9,59 +9,132 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "../../documentation/database/database.md"
+  title    = "ZeroPromile database schema"
+}
+
 datasource db {
   provider = "postgresql"
 }
-
+/// @namespace ZeroPromile
+/// Represents an application user account.
 model User {
+  /// Unique identifier for the user (UUID).
   id  String @id @default(uuid())
+
+  /// User’s display name.
   name String
+
+  /// User’s email address. Must be unique.
   email String @unique
+
+  /// Hashed password used for authentication.
   password String
+
+  /// User’s gender, used for BAC calculations.
   gender Gender
+
+  /// User’s body weight in kilograms.
   weightKg Float
+
+  /// User role determining access level.
   role Role @default(USER)
+
+  /// All drinking sessions created by the user.
   sessions Session[]
+
+  /// Timestamp when the user was created.
   createdAt DateTime @default(now())
 }
-
+/// @namespace ZeroPromile
+/// Represents a drinking session belonging to a user.
 model Session {
+  /// Unique identifier for the session (UUID).
   id  String  @id @default(uuid())
+
+  /// ID of the user who owns this session.
   userId String
+
+  /// Relation to the user.
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Name or label for the session.
   name String
+
+  /// Timestamp when the session started.
   startedAt DateTime  @default(now())
+
+  /// Timestamp when the session ended (if finished).
   endedAt DateTime?
+
+  /// Indicates whether the session is currently active.
   active Boolean  @default(true)
+
+  /// Drinks consumed during this session.
   drinks  SessionDrink[]
+
+  /// Highest estimated BAC reached during the session.
   peakBac Float @default(0)
+
+  /// Timestamp when the session was created.
   createdAt DateTime  @default(now())
+
+  /// Timestamp automatically updated when the session changes.
   updatedAt DateTime  @updatedAt
 
+  /// Index to optimize queries for active sessions per user.
   @@index([userId, active])
 }
-
+/// @namespace ZeroPromile
+/// Represents a single drink consumed during a session.
 model SessionDrink {
+  /// Unique identifier for the drink entry (UUID).
   id String @id @default(uuid())
+
+  /// ID of the session this drink belongs to.
   sessionId String
+
+  /// Relation to the session.
   session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  /// Name of the drink (e.g., beer, wine).
   name  String
+
+  /// Volume of the drink in milliliters.
   volumeMl  Float
+
+  /// Alcohol by volume percentage.
   abv Float
+
+  /// Optional BAC contribution from this drink.
   bacContribution Float?
+
+  /// Timestamp when the drink was consumed.
   consumedAt  DateTime @default(now())
+
+  /// Timestamp when the drink record was created.
   createdAt DateTime @default(now())
 
+  /// Index to optimize querying drinks by session and time.
   @@index([sessionId, consumedAt])
 }
-
-
+/// @namespace ZeroPromile
+/// Defines user roles and permissions.
 enum Role {
+  /// Standard application user.
   USER
-  ADMIN // future ideas for admin
+
+  /// Administrator with elevated privileges.
+  ADMIN
 }
+/// @namespace ZeroPromile
+/// Defines gender for BAC-related calculations.
 enum Gender {
+  /// Male gender.
   MALE
+
+  /// Female gender.
   FEMALE
 }
-
