@@ -5,7 +5,7 @@ import { rateLimit } from "express-rate-limit";
 // import routes
 import authRoutes from "./routes/authRoutes";
 import updateProfileRoutes from "./routes/updateProfileRoutes";
-import drinksRoutes from "./routes/drinksRoutes";
+import drinksRoutes from "./routes/sessionsRoutes";
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   limit: 100,
