@@ -1,7 +1,7 @@
 import type { RequestHandler } from "express";
 import { newUserEntrySchema } from "../validationSchemas/newUserEntrySchema";
 
-export const newUserParser: RequestHandler = (req, _res, next) => {
+export const newUserParser: RequestHandler = (req, _res, next): void => {
   try {
     newUserEntrySchema.parse(req.body);
     next();
