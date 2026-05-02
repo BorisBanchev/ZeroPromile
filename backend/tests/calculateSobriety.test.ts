@@ -266,6 +266,95 @@ describe("PATCH /api/sessions/endsession", () => {
   });
 });
 
+describe("DELETE /api/sessions/:sessionId", () => {
+  it("active session cannot be deleted, throws error 400", async () => {
+    // start session
+    const sessionRes = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Party Session" })
+      .expect(201);
+
+    // try to delete the active session
+    const deletedSessionRes = await request(app)
+      .delete(`/api/sessions/${sessionRes.body.data.sessionId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(400);
+
+    expect(deletedSessionRes.body).toHaveProperty(
+      "error",
+      "Active session cannot be deleted",
+    );
+  });
+
+  it("deletes ended session and all drinks data related to the session", async () => {
+    // start session
+    const sessionRes = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Party Session" })
+      .expect(201);
+
+    // add drink to session
+    const sessionDrinkRes = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        drink: {
+          name: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      })
+      .expect(201);
+
+    // end session
+    const endSessionRes = await request(app)
+      .patch("/api/sessions/endsession")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    // delete session
+
+    const deletedSessionRes = await request(app)
+      .delete(`/api/sessions/${sessionRes.body.data.sessionId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(deletedSessionRes.body).toMatchObject({
+      status: "success",
+      message: "Session deleted successfully",
+      data: {
+        sessionId: sessionRes.body.data.sessionId,
+        sessionName: sessionRes.body.data.sessionName,
+      },
+    });
+
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        sessions: true,
+      },
+    });
+
+    expect(dbUser?.sessions).toEqual([]);
+
+    const sessionCount = await prisma.session.count({
+      where: { userId },
+    });
+    expect(sessionCount).toBe(0);
+
+    const drinkCount = await prisma.sessionDrink.count({
+      where: {
+        session: {
+          userId,
+        },
+      },
+    });
+    expect(drinkCount).toBe(0);
+  });
+});
+
 describe("POST /api/sessions/drinks", () => {
   it("adds second drink to active session and updates BAC calculation", async () => {
     if (!accessToken) throw new Error("Missing access token");
