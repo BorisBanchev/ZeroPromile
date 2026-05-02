@@ -10,7 +10,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     initialize();
-  }, []);
+  }, [initialize]);
 
   if (!isInitialized) {
     return (
