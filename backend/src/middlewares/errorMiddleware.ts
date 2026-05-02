@@ -8,18 +8,18 @@ export const errorMiddleware = (
   _req: Request,
   res: Response,
   _next: NextFunction,
-) => {
+): void => {
   if (error instanceof AppError) {
-    return res.status(error.statusCode).json({ error: error.message });
+    res.status(error.statusCode).json({ error: error.message });
   } else if (error instanceof TokenExpiredError) {
-    return res.status(401).json({ error: "jwt expired" });
+    res.status(401).json({ error: "jwt expired" });
   } else if (error instanceof JsonWebTokenError) {
-    return res.status(401).json({ error: "Not authorized, token failed" });
+    res.status(401).json({ error: "Not authorized, token failed" });
   } else if (error instanceof z.ZodError) {
-    return res.status(400).json({ error: error.issues[0].message });
+    res.status(400).json({ error: error.issues[0].message });
   } else if (error instanceof Error) {
-    return res.status(500).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   } else {
-    return res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 };

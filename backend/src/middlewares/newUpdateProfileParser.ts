@@ -1,7 +1,11 @@
 import type { RequestHandler } from "express";
 import { newUpdateProfileSchema } from "../validationSchemas/newUpdateProfileSchema";
 
-export const newUpdateProfileParser: RequestHandler = (req, _res, next) => {
+export const newUpdateProfileParser: RequestHandler = (
+  req,
+  _res,
+  next,
+): void => {
   try {
     newUpdateProfileSchema.parse(req.body);
     next();

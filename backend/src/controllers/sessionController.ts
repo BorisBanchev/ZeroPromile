@@ -22,7 +22,7 @@ import { AppError } from "../error/appError";
 export const startSession = async (
   req: Request<unknown, unknown, StartSessionRequestBody>,
   res: Response<StartSessionResponseBody | ErrorResponseBody>,
-) => {
+): Promise<void> => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
@@ -48,7 +48,7 @@ export const startSession = async (
     },
   });
 
-  return res.status(201).json({
+  res.status(201).json({
     status: "success",
     message: "Session started successfully",
     data: {
@@ -66,7 +66,7 @@ export const deleteSession = async (
     unknown
   >,
   res: Response<DeleteSessionResponseBody | ErrorResponseBody>,
-) => {
+): Promise<void> => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
@@ -99,7 +99,7 @@ export const deleteSession = async (
     },
   });
 
-  return res.status(200).json({
+  res.status(200).json({
     status: "success",
     message: "Session deleted successfully",
     data: {
@@ -112,7 +112,7 @@ export const deleteSession = async (
 export const addDrinkToSession = async (
   req: Request<unknown, unknown, AddDrinkRequestBody>,
   res: Response<AddDrinkResponseBody | ErrorResponseBody>,
-) => {
+): Promise<void> => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
@@ -182,7 +182,7 @@ export const addDrinkToSession = async (
 
   const sober = timeUntilSober(result.bacNow);
 
-  return res.status(201).json({
+  res.status(201).json({
     status: "success",
     message: "Drink added to session",
     data: {
@@ -207,7 +207,7 @@ export const addDrinkToSession = async (
 export const endSession = async (
   req: Request,
   res: Response<EndSessionResponseBody | ErrorResponseBody>,
-) => {
+): Promise<void> => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
@@ -227,7 +227,7 @@ export const endSession = async (
     },
   });
 
-  return res.status(200).json({
+  res.status(200).json({
     status: "success",
     message: "Session ended",
     data: {
@@ -241,7 +241,7 @@ export const endSession = async (
 export const getUserSessions = async (
   req: Request,
   res: Response<GetSessionsResponseBody | ErrorResponseBody>,
-) => {
+): Promise<void> => {
   if (!req.user) {
     throw new AppError("Not authorized", 401);
   }
@@ -283,7 +283,7 @@ export const getUserSessions = async (
     })),
   }));
 
-  return res.status(200).json({
+  res.status(200).json({
     status: "success",
     message: "Sessions retrieved",
     data: {

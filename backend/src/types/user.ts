@@ -44,3 +44,8 @@ export interface LoginResponseBody {
     refreshToken: string;
   };
 }
+
+export interface LogoutResponseBody {
+  status: string;
+  message: string;
+}

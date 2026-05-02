@@ -52,6 +52,104 @@ afterAll(async () => {
   await disconnectDB();
 });
 
+describe("GET /api/sessions", () => {
+  it("returns all user's sessions", async () => {
+    // we start two sessions, add one drink to them, end the sessions
+    const session1Res = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "session 1" })
+      .expect(201);
+
+    const session1DrinkRes = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        drink: {
+          name: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      })
+      .expect(201);
+
+    const endSession1Res = await request(app)
+      .patch("/api/sessions/endsession")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    const session2Res = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "session 2" })
+      .expect(201);
+
+    const session2DrinkRes = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        drink: {
+          name: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      })
+      .expect(201);
+
+    const endSession2 = await request(app)
+      .patch("/api/sessions/endsession")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    const getSessionsRes = await request(app)
+      .get("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(getSessionsRes.body.status).toBe("success");
+    expect(getSessionsRes.body.message).toBe("Sessions retrieved");
+    expect(getSessionsRes.body.data.sessions).toHaveLength(2);
+
+    // sessions are orderd by startedAt (desc)
+    expect(getSessionsRes.body.data.sessions[0]).toMatchObject({
+      sessionId: expect.any(String),
+      sessionName: "session 2",
+      startedAt: expect.any(String),
+      endedAt: expect.any(String),
+      active: false,
+      totalDrinks: 1,
+      peakBac: expect.any(Number),
+      drinks: [
+        {
+          consumedAt: expect.any(String),
+          bacContribution: expect.any(Number),
+          drinkName: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      ],
+    });
+
+    expect(getSessionsRes.body.data.sessions[1]).toMatchObject({
+      sessionId: expect.any(String),
+      sessionName: "session 1",
+      startedAt: expect.any(String),
+      endedAt: expect.any(String),
+      active: false,
+      totalDrinks: 1,
+      peakBac: expect.any(Number),
+      drinks: [
+        {
+          consumedAt: expect.any(String),
+          bacContribution: expect.any(Number),
+          drinkName: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      ],
+    });
+  });
+});
 describe("POST /api/sessions", () => {
   it("creates session when authenticated", async () => {
     const body = {
@@ -138,6 +236,122 @@ describe("POST /api/sessions", () => {
       .expect(400);
 
     expect(res.body).toHaveProperty("error");
+  });
+});
+
+describe("PATCH /api/sessions/endsession", () => {
+  it("ends active session and sets active property of session to false", async () => {
+    // start session
+    const sessionRes = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "test session" })
+      .expect(201);
+
+    // end session
+    const endSessionRes = await request(app)
+      .patch("/api/sessions/endsession")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(endSessionRes.body).toMatchObject({
+      status: "success",
+      message: "Session ended",
+      data: {
+        sessionId: sessionRes.body.data.sessionId,
+        sessionName: sessionRes.body.data.sessionName,
+        active: false,
+      },
+    });
+  });
+});
+
+describe("DELETE /api/sessions/:sessionId", () => {
+  it("active session cannot be deleted, throws error 400", async () => {
+    // start session
+    const sessionRes = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Party Session" })
+      .expect(201);
+
+    // try to delete the active session
+    const deletedSessionRes = await request(app)
+      .delete(`/api/sessions/${sessionRes.body.data.sessionId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(400);
+
+    expect(deletedSessionRes.body).toHaveProperty(
+      "error",
+      "Active session cannot be deleted",
+    );
+  });
+
+  it("deletes ended session and all drinks data related to the session", async () => {
+    // start session
+    const sessionRes = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({ sessionName: "Party Session" })
+      .expect(201);
+
+    // add drink to session
+    const sessionDrinkRes = await request(app)
+      .post("/api/sessions/drinks")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .send({
+        drink: {
+          name: "beer",
+          volumeMl: 330,
+          abv: 5.0,
+        },
+      })
+      .expect(201);
+
+    // end session
+    const endSessionRes = await request(app)
+      .patch("/api/sessions/endsession")
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    // delete session
+
+    const deletedSessionRes = await request(app)
+      .delete(`/api/sessions/${sessionRes.body.data.sessionId}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(200);
+
+    expect(deletedSessionRes.body).toMatchObject({
+      status: "success",
+      message: "Session deleted successfully",
+      data: {
+        sessionId: sessionRes.body.data.sessionId,
+        sessionName: sessionRes.body.data.sessionName,
+      },
+    });
+
+    const dbUser = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        sessions: true,
+      },
+    });
+
+    expect(dbUser?.sessions).toEqual([]);
+
+    const sessionCount = await prisma.session.count({
+      where: { userId },
+    });
+    expect(sessionCount).toBe(0);
+
+    const drinkCount = await prisma.sessionDrink.count({
+      where: {
+        session: {
+          userId,
+        },
+      },
+    });
+    expect(drinkCount).toBe(0);
   });
 });
 

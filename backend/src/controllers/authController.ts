@@ -8,6 +8,7 @@ import {
   LoginRequestBody,
   LoginResponseBody,
 } from "../types/user";
+import { LogoutResponseBody } from "../types/user";
 import { ErrorResponseBody } from "../types/errorResponse";
 import { Request, Response } from "express";
 import { generateToken } from "../utils/generateToken";
@@ -18,7 +19,7 @@ import { AppError } from "../error/appError";
 const register = async (
   req: Request<unknown, unknown, RegisterRequestBody>,
   res: Response<RegisterResponseBody | ErrorResponseBody>,
-): Promise<Response<RegisterResponseBody | ErrorResponseBody>> => {
+): Promise<void> => {
   const { name, email, password, passwordConfirm, gender, weightKg } = req.body;
 
   const userExists = await prisma.user.findUnique({
@@ -51,7 +52,7 @@ const register = async (
   const accessToken = generateToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
 
-  return res.status(201).json({
+  res.status(201).json({
     status: "success",
     data: {
       user: {
@@ -70,7 +71,7 @@ const register = async (
 const login = async (
   req: Request<unknown, unknown, LoginRequestBody>,
   res: Response<LoginResponseBody | ErrorResponseBody>,
-): Promise<Response<LoginResponseBody | ErrorResponseBody>> => {
+): Promise<void> => {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({
@@ -90,7 +91,7 @@ const login = async (
   const accessToken = generateToken(user.id);
   const refreshToken = generateRefreshToken(user.id);
 
-  return res.status(201).json({
+  res.status(201).json({
     status: "success",
     data: {
       user: {
@@ -109,7 +110,7 @@ const login = async (
 const refreshTokenEndpoint = async (
   req: Request<unknown, unknown, { refreshToken: string }>,
   res: Response,
-): Promise<Response> => {
+): Promise<void> => {
   const { refreshToken } = req.body;
 
   if (!refreshToken) {
@@ -135,7 +136,7 @@ const refreshTokenEndpoint = async (
 
   const accessToken = generateToken(decoded.id);
 
-  return res.json({
+  res.json({
     status: "success",
     data: {
       accessToken,
@@ -143,9 +144,9 @@ const refreshTokenEndpoint = async (
   });
 };
 
-const logout = (_req: Request, res: Response): Response => {
+const logout = (_req: Request, res: Response<LogoutResponseBody>): void => {
   // logout is handled on the client by deleting tokens
-  return res.status(200).json({
+  res.status(200).json({
     status: "success",
     message: "Logged out successfully",
   });

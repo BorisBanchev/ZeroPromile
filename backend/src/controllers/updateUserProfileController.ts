@@ -8,7 +8,7 @@ type ReqBody = { gender: "male" | "female"; weight: number };
 const setGenderAndWeight = async (
   req: Request<unknown, unknown, ReqBody>,
   res: Response,
-): Promise<Response> => {
+): Promise<void> => {
   const { gender, weight } = req.body;
 
   if (!req.user) {
@@ -24,7 +24,7 @@ const setGenderAndWeight = async (
     select: { gender: true, weightKg: true },
   });
 
-  return res.status(200).json({
+  res.status(200).json({
     status: "success",
     message: "successfully updated user profile",
     data: { gender: updated.gender, weightKg: updated.weightKg },
