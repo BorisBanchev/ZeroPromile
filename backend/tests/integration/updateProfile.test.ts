@@ -1,7 +1,7 @@
 import { beforeAll, afterAll, beforeEach, describe, it, expect } from "vitest";
 import request from "supertest";
-import app from "../src/app";
-import { connectDB, disconnectDB, prisma } from "../src/config/db";
+import app from "../../src/app";
+import { connectDB, disconnectDB, prisma } from "../../src/config/db";
 
 const TEST_USER = {
   name: "test user",

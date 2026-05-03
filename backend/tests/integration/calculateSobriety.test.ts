@@ -1,8 +1,8 @@
 import { beforeAll, afterAll, describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
-import app from "../src/app";
-import { connectDB, disconnectDB, prisma } from "../src/config/db";
-import { currentBAC } from "../src/utils/calculateSobriety";
+import app from "../../src/app";
+import { connectDB, disconnectDB, prisma } from "../../src/config/db";
+import { currentBAC } from "../../src/utils/calculateSobriety";
 
 const TEST_USER = {
   name: "session user",

@@ -9,9 +9,9 @@ import {
 } from "vitest";
 import request from "supertest";
 import bcrypt from "bcryptjs";
-import { generateRefreshToken } from "../src/utils/generateRefreshToken";
-import app from "../src/app";
-import { connectDB, disconnectDB, prisma } from "../src/config/db";
+import { generateRefreshToken } from "../../src/utils/generateRefreshToken";
+import app from "../../src/app";
+import { connectDB, disconnectDB, prisma } from "../../src/config/db";
 
 beforeAll(async () => {
   await connectDB();
