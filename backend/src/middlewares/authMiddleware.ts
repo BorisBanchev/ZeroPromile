@@ -6,7 +6,7 @@ import { AppError } from "../error/appError";
 import { User } from "../generated/prisma/client";
 declare module "express-serve-static-core" {
   interface Request {
-    user?: User;
+    user: User;
   }
 }
 
