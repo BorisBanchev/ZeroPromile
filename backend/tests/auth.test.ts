@@ -8,6 +8,8 @@ import {
   expect,
 } from "vitest";
 import request from "supertest";
+import bcrypt from "bcryptjs";
+import { generateRefreshToken } from "../src/utils/generateRefreshToken";
 import app from "../src/app";
 import { connectDB, disconnectDB, prisma } from "../src/config/db";
 
@@ -73,6 +75,18 @@ describe("POST /api/auth/register", () => {
       "User already exists with this email",
     );
   });
+
+  it("responds 400 when passwords don't match", async () => {
+    const res = await request(app)
+      .post("/api/auth/register")
+      .send({
+        ...TEST_USER,
+        passwordConfirm: "different_password",
+      })
+      .expect(400);
+
+    expect(res.body).toHaveProperty("error", "Passwords don't match");
+  });
 });
 
 describe("POST /api/auth/login", () => {
@@ -125,6 +139,89 @@ describe("POST /api/auth/login", () => {
     expect(res.body.data).toHaveProperty("refreshToken");
     expect(typeof res.body.data.accessToken).toBe("string");
     expect(typeof res.body.data.refreshToken).toBe("string");
+  });
+});
+
+describe("POST /api/auth/refresh-token", () => {
+  const REFRESH_USER = {
+    name: "Refresh User",
+    email: "refresh_user@example.com",
+    password: "password123",
+    passwordConfirm: "password123",
+    gender: "male",
+    weightKg: 75,
+  };
+
+  beforeEach(async () => {
+    await prisma.user.deleteMany({ where: { email: REFRESH_USER.email } });
+  });
+
+  afterEach(async () => {
+    await prisma.user.deleteMany({ where: { email: REFRESH_USER.email } });
+  });
+
+  it("responds 401 when refresh token is missing", async () => {
+    const res = await request(app)
+      .post("/api/auth/refresh-token")
+      .send({})
+      .expect(401);
+
+    expect(res.body).toHaveProperty("error", "Refresh token required");
+  });
+
+  it("responds 401 when refresh token is invalid", async () => {
+    const res = await request(app)
+      .post("/api/auth/refresh-token")
+      .send({ refreshToken: "invalid token" })
+      .expect(401);
+
+    expect(res.body).toHaveProperty("error");
+  });
+
+  it("responds 401 when user no longer exists", async () => {
+    // Create user, generate token, then delete user
+    const user = await prisma.user.create({
+      data: {
+        name: "Temp",
+        email: "temp@example.com",
+        password: await bcrypt.hash("pass", 10),
+        gender: "MALE",
+        weightKg: 70,
+      },
+    });
+
+    const refreshToken = generateRefreshToken(user.id);
+
+    await prisma.user.delete({ where: { id: user.id } });
+
+    const res = await request(app)
+      .post("/api/auth/refresh-token")
+      .send({ refreshToken })
+      .expect(401);
+
+    expect(res.body).toHaveProperty("error", "User no longer exists");
+
+    await prisma.user.deleteMany({
+      where: { email: "temp_delete@example.com" },
+    });
+  });
+
+  it("returns new access token with valid refresh token", async () => {
+    const registerRes = await request(app)
+      .post("/api/auth/register")
+      .send(REFRESH_USER)
+      .expect(201);
+
+    const refreshToken = registerRes.body.data.refreshToken;
+
+    const res = await request(app)
+      .post("/api/auth/refresh-token")
+      .send({ refreshToken })
+      .expect(200);
+
+    expect(res.body.status).toBe("success");
+    expect(res.body.data).toHaveProperty("accessToken");
+    expect(typeof res.body.data.accessToken).toBe("string");
   });
 });
 
