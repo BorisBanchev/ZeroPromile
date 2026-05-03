@@ -66,7 +66,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
         run: cd backend && npx prisma migrate deploy
 
-      - name: Run tests
+      - name: Run tests with coverage
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/testdb
           NODE_ENV: test
@@ -74,7 +74,13 @@ jobs:
           JWT_REFRESH_TOKEN_SECRET: test_refresh_secret
           JWT_EXPIRES_IN: 15m
           REFRESH_TOKEN_EXPIRES_IN: 7d
-        run: cd backend && npm run test
+        run: cd backend && npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/coverage/lcov.info
+          fail_ci_if_error: false
 
   build-image:
     runs-on: ubuntu-latest

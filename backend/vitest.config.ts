@@ -9,7 +9,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
-      reporter: ["html"],
+      reporter: ["html", "lcov"],
       reportsDirectory: "./coverage",
       exclude: [
         "node_modules/",
@@ -22,7 +22,15 @@ export default defineConfig({
         "src/config/**",
         "src/types/**",
         "src/generated/**",
+        "src/utils/generateToken.ts",
+        "src/utils/generateRefreshToken.ts",
       ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 70,
+        statements: 80,
+      },
     },
   },
 });
