@@ -1,5 +1,6 @@
 ![Staging CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/staging.yaml/badge.svg?branch=staging)
 ![Production CI](https://github.com/BorisBanchev/ZeroPromile/actions/workflows/production.yaml/badge.svg?branch=main)
+[![codecov](https://codecov.io/gh/BorisBanchev/ZeroPromile/graph/badge.svg?token=G9AJERMNF6)](https://codecov.io/gh/BorisBanchev/ZeroPromile)
 
 ## Documentation
 

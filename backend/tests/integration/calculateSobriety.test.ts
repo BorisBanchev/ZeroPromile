@@ -1,8 +1,8 @@
 import { beforeAll, afterAll, describe, it, expect, beforeEach } from "vitest";
 import request from "supertest";
-import app from "../src/app";
-import { connectDB, disconnectDB, prisma } from "../src/config/db";
-import { currentBAC } from "../src/utils/calculateSobriety";
+import app from "../../src/app";
+import { connectDB, disconnectDB, prisma } from "../../src/config/db";
+import { currentBAC } from "../../src/utils/calculateSobriety";
 
 const TEST_USER = {
   name: "session user",
@@ -285,6 +285,36 @@ describe("DELETE /api/sessions/:sessionId", () => {
       "error",
       "Active session cannot be deleted",
     );
+  });
+
+  it("returns 404 when session belongs to another user", async () => {
+    const otherUser = await prisma.user.create({
+      data: {
+        name: "Other",
+        email: "other@test.com",
+        password: "hash",
+        gender: "MALE",
+        weightKg: 80,
+      },
+    });
+
+    const otherSession = await prisma.session.create({
+      data: {
+        userId: otherUser.id,
+        name: "Other Session",
+        active: false,
+      },
+    });
+
+    const res = await request(app)
+      .delete(`/api/sessions/${otherSession.id}`)
+      .set("Authorization", `Bearer ${accessToken}`)
+      .expect(404);
+
+    expect(res.body).toHaveProperty("error", "Session not found");
+
+    await prisma.session.deleteMany({ where: { userId: otherUser.id } });
+    await prisma.user.delete({ where: { id: otherUser.id } });
   });
 
   it("deletes ended session and all drinks data related to the session", async () => {
