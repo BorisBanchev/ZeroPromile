@@ -15,6 +15,7 @@
   - [home screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/homeScreens)
   - [profile screen manual](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/userManual/profileScreens/profileScreen.md)
   - [sessions screen manual](https://github.com/BorisBanchev/ZeroPromile/tree/main/documentation/userManual/sessionsScreens)
+- [tekoäly](https://github.com/BorisBanchev/ZeroPromile/blob/main/documentation/tekoaly.md)
 
 # Open the app in Expo Go
 
@@ -23,7 +24,7 @@ Select `Enter URL` in Expo Go:
 - Type this url to open the app:
 
 ```bash
-exp://u.expo.dev/67e0bf68-273e-4320-996e-9b25270f2002/group/ef7a679e-2550-4803-a5bd-df60f7b29a4c
+exp://u.expo.dev/67e0bf68-273e-4320-996e-9b25270f2002/group/eb0e8c61-afdf-42eb-a986-2cf0f588d16b
 ```
 
 For `ios` you might need to paste the link in browser and select open in Expo Go
